@@ -13,6 +13,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -62,14 +63,14 @@ fun Greeting(modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.height(30.dp))
             var email by remember { mutableStateOf("") }
-            TextField(
+            OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
                 label = { Text("メールアドレス") }
             )
             Spacer(modifier = Modifier.height(16.dp)) // フィールド間のスペース
             var password by remember { mutableStateOf("") }
-            TextField(
+            OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
                 label = { Text("パスワード") }
