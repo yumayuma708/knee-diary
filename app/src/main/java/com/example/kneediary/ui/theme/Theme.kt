@@ -14,7 +14,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.core.view.WindowCompat
+import com.example.kneediary.R
+import androidx.compose.material3.Typography
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.sp
+
 
 private val DarkColorScheme = darkColorScheme(
     primary = Cyan80,
@@ -28,16 +36,23 @@ private val LightColorScheme = lightColorScheme(
     secondary = CyanGrey40,
     tertiary = Cyan40,
     background = Color(0xFFFFFBFE),
+)
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+val KiwiMaru = FontFamily(Font(R.font.kiwi_maru_regular))
+
+// Typographyの定義を追加
+private val AppTypography = Typography(
+    displayLarge = TextStyle(
+        fontFamily = KiwiMaru,
+        fontWeight = FontWeight.Normal,
+        fontSize = 34.sp
+    ),
+    bodyLarge = TextStyle(
+        fontFamily = KiwiMaru,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp
+    )
+    // 必要に応じて他のテキストスタイルも定義
 )
 
 @Composable
@@ -67,7 +82,8 @@ fun KneeDiaryTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+        typography = AppTypography
+    ) {
+        content()
+    }
 }
