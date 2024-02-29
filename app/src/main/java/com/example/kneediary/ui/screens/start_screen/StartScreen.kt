@@ -116,20 +116,27 @@ fun Greeting(modifier: Modifier = Modifier) {
             }
             Spacer(modifier = Modifier.height(30.dp))
             val annotatedString = buildAnnotatedString {
-                append("このアプリの利用を開始することで、")
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                    append("このアプリの利用を開始することで、")
+                }
                 pushStringAnnotation(tag = "TERMS", annotation = "利用規約ページへ")
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.tertiary)) {
                     append("利用規約")
                 }
                 pop()
-                append("及び")
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                    append("及び")
+                }
                 pushStringAnnotation(tag = "PRIVACY", annotation = "プライバシーポリシーページへ")
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.tertiary)) {
                     append("プライバシーポリシー")
                 }
                 pop()
-                append("に同意したものとみなします。")
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                    append("に同意したものとみなします。")
+                }
             }
+
             ClickableText(
                 text = annotatedString,
                 onClick = { offset ->
