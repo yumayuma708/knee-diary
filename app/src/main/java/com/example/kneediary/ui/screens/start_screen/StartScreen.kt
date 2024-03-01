@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.kneediary.data.repositories.AuthRepository
 import com.example.kneediary.ui.theme.KneeDiaryTheme
 
 @Composable
@@ -44,12 +46,17 @@ fun StartScreen(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.primary,
     ) {
+    val authRepository = remember { AuthRepository() }
+    val viewModel: StartScreenViewModel = viewModel(factory = StartScreenViewModelFactory(authRepository))
     Greeting(modifier = modifier)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Greeting(modifier: Modifier = Modifier) {
+
+    val viewModel: StartScreenViewModel = viewModel()
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -88,32 +95,42 @@ fun Greeting(modifier: Modifier = Modifier) {
                     Icon(Icons.Default.VpnKey , contentDescription = "パスワード")
                 }
             )
-            Spacer(modifier = Modifier.height(30.dp)) // TextFieldと次のコンテンツ間のスペース
+            Spacer(modifier = Modifier.height(15.dp)) // TextFieldと次のコンテンツ間のスペース
 
-            Row {
-                Button(
-                    onClick = {
-                        StartScreenViewModel().signInWithEmailAndPassword(email, password,
-                            onSuccess = {
-                                // ログイン成功時の処理
-                            },
-                            onError = { exception ->
-                                // ログイン失敗時の処理、例えばエラーメッセージの表示
-                            }
-                        )
-                    },
-                ) {
-                    Text("ログイン")
-                }
-                Spacer(modifier = Modifier.width(30.dp))
-                Button(
-                    onClick = { /* ボタンのクリック
-イベントをここに記述 */
-                    },
-                ) {
-                    Text("新規登録")
-                }
+            Button(
+                onClick = {
+                    viewModel.signInWithEmailAndPassword(email, password,
+                        onSuccess = {
+                            // ログイン成功時の処理
+                        },
+                        onError = {
+                            // ログイン失敗時の処理、例えばエラーメッセージの表示
+                        }
+                    )
+                },
+            ) {
+                Text("ログイン")
             }
+            Spacer(modifier = Modifier.height(30.dp))
+            Text(text ="まだログインしていない場合",
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Spacer(modifier = Modifier.height(15.dp))
+            Button(
+                    onClick = {
+                        // ボタンのクリックイベントをここに記述
+                    }
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Filled.PersonAdd,
+                            contentDescription = "新規登録",
+                            modifier = Modifier.padding(end = 8.dp) // アイコンとテキストの間隔
+                        )
+                        Text("新規登録")
+                    }
+            }
+
             Spacer(modifier = Modifier.height(30.dp))
             val annotatedString = buildAnnotatedString {
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
