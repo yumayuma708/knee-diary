@@ -12,7 +12,12 @@
           "package_name": "com.example.kneediary"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "562421348158-3tmrk30nofsmkm9d7g59mq99kbka53jt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBTYWtXd55XdWbjw_bylRsqNR8FKaZU_5A"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "562421348158-3tmrk30nofsmkm9d7g59mq99kbka53jt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
