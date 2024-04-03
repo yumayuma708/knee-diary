@@ -1,18 +1,12 @@
 package com.example.kneediary.ui.screens.start_screen
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.kneediary.data.repositories.AuthRepository
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 class StartScreenViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
@@ -30,6 +24,14 @@ class StartScreenViewModel(private val authRepository: AuthRepository) : ViewMod
             }
         }
     }
+    // LiveDataを使用してUIに遷移イベントを通知
+    private val _navigateToSignUp = MutableLiveData<Event<Unit>>()
+    val navigateToSignUp: LiveData<Event<Unit>> = _navigateToSignUp
+
+    fun onSignUpClicked() {
+        // 新規登録ボタンがクリックされた時にイベントを発行
+        _navigateToSignUp.value = Event(Unit)
+    }
 }
 
 class StartScreenViewModelFactory(private val authRepository: AuthRepository) : ViewModelProvider.Factory {
@@ -42,3 +44,23 @@ class StartScreenViewModelFactory(private val authRepository: AuthRepository) : 
     }
 }
 
+open class Event<out T>(private val content: T) {
+    private var hasBeenHandled = false
+
+    /**
+     * Returns the content and prevents its use again.
+     */
+    fun getContentIfNotHandled(): T? {
+        return if (hasBeenHandled) {
+            null
+        } else {
+            hasBeenHandled = true
+            content
+        }
+    }
+
+    /**
+     * Returns the content, even if it's already been handled.
+     */
+    fun peekContent(): T = content
+}

@@ -1,5 +1,6 @@
 package com.example.kneediary.ui.screens.start_screen
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +24,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,16 +41,40 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.kneediary.data.repositories.AuthRepository
+import com.example.kneediary.ui.auth.FirebaseUIActivity
 import com.example.kneediary.ui.theme.KneeDiaryTheme
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun StartScreen(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.primary,
-    ) {
+) {
     val authRepository = remember { AuthRepository() }
     val viewModel: StartScreenViewModel = viewModel(factory = StartScreenViewModelFactory(authRepository))
+    val context = LocalContext.current
+
+    val navigateToSignUpEvent by viewModel.navigateToSignUp.observeAsState()
+
+    // `LaunchedEffect` 内で結果を参照
+    LaunchedEffect(key1 = navigateToSignUpEvent) {
+        navigateToSignUpEvent?.getContentIfNotHandled()?.let {
+            val intent = Intent(context, FirebaseUIActivity::class.java)
+            context.startActivity(intent)
+        }
+    }
+
     Greeting(modifier = modifier)
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    KneeDiaryTheme {
+        Greeting()
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,6 +82,7 @@ fun StartScreen(
 fun Greeting(modifier: Modifier = Modifier) {
 
     val viewModel: StartScreenViewModel = viewModel()
+    val context = LocalContext.current
 
     Box(
         contentAlignment = Alignment.Center,
@@ -118,7 +145,8 @@ fun Greeting(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(15.dp))
             Button(
                     onClick = {
-                        // ボタンのクリックイベントをここに記述
+                        val intent = Intent(context, FirebaseUIActivity::class.java)
+                        context.startActivity(intent)
                     }
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -176,13 +204,5 @@ fun Greeting(modifier: Modifier = Modifier) {
                 Text("ホーム画面へ")
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    KneeDiaryTheme {
-        Greeting()
     }
 }
