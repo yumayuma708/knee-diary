@@ -8,9 +8,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.googlefonts.GoogleFont
+import com.example.compose.KneeDiaryTheme
 import com.example.kneediary.ui.screens.start_screen.StartScreen
-import com.example.kneediary.ui.theme.KneeDiaryTheme
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
