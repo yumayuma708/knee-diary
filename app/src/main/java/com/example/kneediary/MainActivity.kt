@@ -3,12 +3,13 @@ package com.example.kneediary
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.googlefonts.GoogleFont
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.compose.KneeDiaryTheme
+import com.example.kneediary.navigation.Nav
+import com.example.kneediary.ui.screens.navigated_screen.home_screen.HomeScreen
 import com.example.kneediary.ui.screens.start_screen.StartScreen
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,11 +21,19 @@ class MainActivity : ComponentActivity() {
         )
         setContent {
             KneeDiaryTheme {
-                Surface(
-                    color = MaterialTheme.colorScheme.background,
-                    modifier = Modifier.fillMaxSize(),
-                ) {
-                    StartScreen() // StartScreen コンポーザブル関数を呼び出す
+                val navController = rememberNavController()
+                NavHost(navController = navController, startDestination = Nav.StartScreen.name) {
+                    composable(route = Nav.StartScreen.name) {
+                        StartScreen(
+                            onNavigateToHomeScreen = {
+                                navController.navigate(Nav.HomeScreen.name)
+                            },
+                        )
+                    }
+                    composable(route = Nav.HomeScreen.name) {
+                        HomeScreen(
+                        )
+                    }
                 }
             }
         }

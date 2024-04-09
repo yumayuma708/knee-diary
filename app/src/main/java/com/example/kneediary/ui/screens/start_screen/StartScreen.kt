@@ -35,17 +35,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.compose.KneeDiaryTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StartScreen(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.primary,
+    onNavigateToHomeScreen: () -> Unit,
     ) {
-    Greeting(modifier = modifier)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun Greeting(modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -80,7 +76,7 @@ fun Greeting(modifier: Modifier = Modifier) {
                 onValueChange = { password = it },
                 label = { Text("パスワード") },
                 visualTransformation = PasswordVisualTransformation(),
-                        leadingIcon = {
+                leadingIcon = {
                     Icon(Icons.Default.VpnKey , contentDescription = "パスワード")
                 }
             )
@@ -148,9 +144,9 @@ fun Greeting(modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.height(30.dp))
             Button(
-                onClick = { /* ボタンのクリック
-イベントをここに記述 */
-                },
+                onClick = (
+                        onNavigateToHomeScreen
+                        )
             ) {
                 Text("ホーム画面へ")
             }
@@ -162,6 +158,6 @@ fun Greeting(modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     KneeDiaryTheme {
-        Greeting()
+        StartScreen(onNavigateToHomeScreen = {})
     }
 }
