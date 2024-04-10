@@ -29,6 +29,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.kneediary.navigation.Nav
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen.DateScreen
+import com.example.kneediary.ui.screens.navigated_screen.home_screen.note_screen.NoteScreen
+import com.example.kneediary.ui.screens.navigated_screen.home_screen.weekly_screen.WeeklyScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +60,12 @@ fun HomeScreen(
             )
         },
         content = { innerPadding ->
-            DateScreen(modifier = Modifier.padding(innerPadding))
+            when (selectedItem) {
+                0 -> DateScreen(modifier = Modifier.padding(innerPadding))
+                1 -> WeeklyScreen(modifier = Modifier.padding(innerPadding)) // 仮のコンポーザブル関数
+                2 -> NoteScreen(modifier = Modifier.padding(innerPadding))  // 仮のコンポーザブル関数
+                else -> Text("未定義の画面です", modifier = Modifier.padding(innerPadding))
+            }
         },
         bottomBar = {
             BottomAppBar {
@@ -68,13 +75,7 @@ fun HomeScreen(
                             icon = { Icon(icons[index], contentDescription = item) },
                             label = { Text(item) },
                             selected = selectedItem == index,
-                            onClick = { selectedItem = index
-                                when (index) {
-                                    0 -> navController.navigate(Nav.DateScreen.name)
-                                    1 -> navController.navigate(Nav.WeeklyScreen.name)
-                                    2 -> navController.navigate(Nav.NoteScreen.name)
-                                }
-                            }
+                            onClick = { selectedItem = index }
                         )
                     }
                 }
