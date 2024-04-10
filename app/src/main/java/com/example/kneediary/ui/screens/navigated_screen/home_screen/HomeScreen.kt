@@ -6,11 +6,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Today
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -59,11 +63,30 @@ fun HomeScreen(
                 }
             )
         },
+        floatingActionButton = {
+            when (selectedItem) {
+                0 -> FloatingActionButton(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    onClick = { /* 日に関連するアクション */ },
+                    content = { Icon(Icons.Filled.Edit, contentDescription = "追加") }
+                )
+                1 -> FloatingActionButton(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    onClick = { /* 週に関連するアクション */ },
+                    content = { Icon(Icons.Filled.Edit, contentDescription = "編集") }
+                )
+                2 -> FloatingActionButton(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    onClick = { /* メモに関連するアクション */ },
+                    content = { Icon(Icons.Filled.Add, contentDescription = "共有") }
+                )
+            }
+        },
         content = { innerPadding ->
             when (selectedItem) {
                 0 -> DateScreen(modifier = Modifier.padding(innerPadding))
-                1 -> WeeklyScreen(modifier = Modifier.padding(innerPadding)) // 仮のコンポーザブル関数
-                2 -> NoteScreen(modifier = Modifier.padding(innerPadding))  // 仮のコンポーザブル関数
+                1 -> WeeklyScreen(modifier = Modifier.padding(innerPadding))
+                2 -> NoteScreen(modifier = Modifier.padding(innerPadding))
                 else -> Text("未定義の画面です", modifier = Modifier.padding(innerPadding))
             }
         },
