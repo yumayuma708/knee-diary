@@ -10,17 +10,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,20 +33,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.kneediary.ui.theme.KneeDiaryTheme
+import com.example.compose.KneeDiaryTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StartScreen(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.primary,
+    onNavigateToHomeScreen: () -> Unit,
     ) {
-    Greeting(modifier = modifier)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun Greeting(modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -84,7 +76,7 @@ fun Greeting(modifier: Modifier = Modifier) {
                 onValueChange = { password = it },
                 label = { Text("パスワード") },
                 visualTransformation = PasswordVisualTransformation(),
-                        leadingIcon = {
+                leadingIcon = {
                     Icon(Icons.Default.VpnKey , contentDescription = "パスワード")
                 }
             )
@@ -152,9 +144,9 @@ fun Greeting(modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.height(30.dp))
             Button(
-                onClick = { /* ボタンのクリック
-イベントをここに記述 */
-                },
+                onClick = (
+                        onNavigateToHomeScreen
+                        )
             ) {
                 Text("ホーム画面へ")
             }
@@ -166,6 +158,6 @@ fun Greeting(modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     KneeDiaryTheme {
-        Greeting()
+        StartScreen(onNavigateToHomeScreen = {})
     }
 }
