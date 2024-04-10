@@ -4,4 +4,6 @@ enum class Nav {
     StartScreen,
     HomeScreen,
     DateScreen,
+    NoteScreen,
+    WeeklyScreen,
 }

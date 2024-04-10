@@ -25,18 +25,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import com.example.kneediary.navigation.Nav
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen.DateScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-){
+    navController: NavHostController
+) {
     var selectedItem by remember { mutableIntStateOf(0) }
     val items = listOf("日", "週", "メモ")
-    val icons = listOf(Icons.Filled.Today, Icons.Filled.DateRange,
+    val icons = listOf(
+        Icons.Filled.Today, Icons.Filled.DateRange,
         Icons.Filled.Description
     )
-    Scaffold (
+    Scaffold(
         topBar = {
             TopAppBar(
                 title = {
@@ -59,12 +64,18 @@ fun HomeScreen(
             BottomAppBar {
                 NavigationBar {
                     items.forEachIndexed { index, item ->
-                    NavigationBarItem(
-                        icon = { Icon(icons[index], contentDescription = item) },
-                        label = { Text(item) },
-                        selected = selectedItem == index,
-                        onClick = { selectedItem = index }
-                    )
+                        NavigationBarItem(
+                            icon = { Icon(icons[index], contentDescription = item) },
+                            label = { Text(item) },
+                            selected = selectedItem == index,
+                            onClick = { selectedItem = index
+                                when (index) {
+                                    0 -> navController.navigate(Nav.DateScreen.name)
+                                    1 -> navController.navigate(Nav.WeeklyScreen.name)
+                                    2 -> navController.navigate(Nav.NoteScreen.name)
+                                }
+                            }
+                        )
                     }
                 }
             }
