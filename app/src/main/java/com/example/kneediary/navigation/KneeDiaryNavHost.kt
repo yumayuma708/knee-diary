@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.HomeScreen
+import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen.DateScreen
 import com.example.kneediary.ui.screens.start_screen.StartScreen
 
 @Composable
@@ -21,8 +22,10 @@ fun KneeDiaryNavHost(
                         )
                     }
                     composable(route = Nav.HomeScreen.name) {
-                        HomeScreen(
-                        )
+                        HomeScreen()
+                    }
+                    composable(route = Nav.DateScreen.name) {
+                        DateScreen()
                     }
                 }
 }

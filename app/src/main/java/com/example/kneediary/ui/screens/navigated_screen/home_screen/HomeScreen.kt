@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Today
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,14 +25,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen.DateScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-
 ){
     var selectedItem by remember { mutableIntStateOf(0) }
-    val items = listOf("Songs", "Artists", "Playlists")
+    val items = listOf("日", "週", "メモ")
+    val icons = listOf(Icons.Filled.Today, Icons.Filled.DateRange,
+        Icons.Filled.Description
+    )
     Scaffold (
         topBar = {
             TopAppBar(
@@ -48,18 +53,14 @@ fun HomeScreen(
             )
         },
         content = { innerPadding ->
-        Box (
-            modifier = Modifier.padding(innerPadding)
-        ){
-            Text(text = "ここはホーム画面です")
-        }
+            DateScreen(modifier = Modifier.padding(innerPadding))
         },
         bottomBar = {
             BottomAppBar {
                 NavigationBar {
                     items.forEachIndexed { index, item ->
                     NavigationBarItem(
-                        icon = { Icon(Icons.Filled.Favorite, contentDescription = item) },
+                        icon = { Icon(icons[index], contentDescription = item) },
                         label = { Text(item) },
                         selected = selectedItem == index,
                         onClick = { selectedItem = index }
