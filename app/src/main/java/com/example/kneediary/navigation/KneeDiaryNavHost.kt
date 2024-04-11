@@ -42,7 +42,9 @@ fun KneeDiaryNavHost(
             WeeklyScreen()
         }
         composable(route = Nav.RecordScreen.name){
-            RecordScreen()
+            RecordScreen(
+                navController = navController
+            )
         }
         composable(route = Nav.RecordNoteScreen.name){
             RecordNoteScreen()
