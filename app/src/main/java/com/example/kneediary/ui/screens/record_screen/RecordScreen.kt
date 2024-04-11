@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AcUnit
+import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.Umbrella
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.compose.CustomColor7
 import com.example.kneediary.navigation.Nav
 import kotlin.math.roundToInt
 
@@ -44,12 +46,16 @@ fun RecordScreen(
     var pain by remember { mutableStateOf(0f) }
     val customOrange = Color(1f, 165f / 255f, 0f)
     val sliderColor = when {
-        pain < 0.25f -> Color.Blue // painが0.25未満の場合は緑
-        pain < 0.5f -> Color.Green // painが0.25以上0.5未満の場合は黄
-        pain < 0.75f -> Color.Yellow // painが0.5以上0.75未満の場合はオレンジ
+        pain < 0.25f -> Color.Blue
+        pain < 0.5f -> Color.Green
+        pain < 0.75f -> Color.Yellow
         pain < 1f -> customOrange
-        else -> Color.Red // painが0.75以上の場合は赤
+        else -> Color.Red
     }
+    var selectedIconId by remember { mutableStateOf<Int?>(null) }
+    val icons =
+        listOf(Icons.Filled.WbSunny, Icons.Filled.Cloud, Icons.Filled.Umbrella, Icons.Filled.AcUnit)
+    val iconIds = listOf(0, 1, 2, 3)
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -82,7 +88,6 @@ fun RecordScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Divider()
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
@@ -96,7 +101,7 @@ fun RecordScreen(
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Start
-                    ){Text("足の痛み")}
+                    ) { Text("足の痛み") }
                     Slider(
                         value = pain,
                         onValueChange = { newValue ->
@@ -109,7 +114,30 @@ fun RecordScreen(
                             inactiveTrackColor = sliderColor.copy(alpha = 0.24f)
                         )
                     )
-                    Text(text = ((pain*4).roundToInt()+1).toString())
+                    Text(text = ((pain * 4).roundToInt() + 1).toString())
+                    Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                    ){
+                        iconIds.forEach { id ->
+                            IconButton(
+                                onClick = {
+                                    selectedIconId = id
+                                }
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(48.dp),
+                                    imageVector = icons[id],
+                                    contentDescription = null,
+                                    tint = if (selectedIconId == id) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.onSurface.copy(
+                                        alpha = 0.6f
+                                    )
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
