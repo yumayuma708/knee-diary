@@ -6,4 +6,6 @@ enum class Nav {
     DateScreen,
     NoteScreen,
     WeeklyScreen,
+    RecordScreen,
+    RecordNoteScreen,
 }
