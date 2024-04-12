@@ -21,12 +21,14 @@ import androidx.compose.material.icons.rounded.Event
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
@@ -46,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
@@ -324,6 +327,19 @@ fun RecordScreen(
                         placeholder = { Text("例：右足の外側が痛い") },
                         modifier = Modifier.height(250.dp)
                     )
+                    Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
+                    OutlinedButton(
+                        onClick = {
+                            navController.navigateUp()
+                            //データを保存する関数をViewModelに作成
+                        },
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    ) {
+                    Text("保存", style = TextStyle(color = MaterialTheme.colorScheme.onPrimary))
+                    }
                 }
             }
         }
