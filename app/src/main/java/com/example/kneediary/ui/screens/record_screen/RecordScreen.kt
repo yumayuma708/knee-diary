@@ -18,10 +18,12 @@ import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Event
+import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,7 +33,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,8 +52,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kneediary.navigation.Nav
 import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
@@ -72,17 +77,31 @@ fun RecordScreen(
     val icons =
         listOf(Icons.Filled.WbSunny, Icons.Filled.Cloud, Icons.Filled.Umbrella, Icons.Filled.AcUnit)
     val iconIds = listOf(0, 1, 2, 3)
-    val datePickerState = rememberDatePickerState()
-    val now = ZonedDateTime.now(ZoneId.of("Asia/Tokyo"))
-    val df = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
-    val fdate = df.format(now)
-    val formattedDate: String = datePickerState.selectedDateMillis?.let {
-        val localDate = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
-        localDate.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日"))
-    } ?: fdate
-    var showDialog by remember { mutableStateOf(false) }
+
+//    val datePickerState = rememberDatePickerState()
+//    val now = ZonedDateTime.now(ZoneId.of("Asia/Tokyo"))
+//    val df = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
+//    val tf = DateTimeFormatter.ofPattern("HH時mm分")
+//    val fdate = df.format(now)
+//    val ftime = tf.format(now)
+//    val formattedDate: String = datePickerState.selectedDateMillis?.let {
+//        val localDate = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
+//        localDate.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日"))
+//    } ?: fdate
+//    val selectedTime by remember { mutableStateOf<LocalTime?>(null) }
+//    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+//    val formattedTime: String = selectedTime?.format(timeFormatter) ?: ftime
+//    var showDateDialogs by remember { mutableStateOf(false) }
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
+//    var showTimeDialogs by remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState()
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var showDateDialog by remember { mutableStateOf(false) }
+    val dateFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
+    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
+    var showTimeDialog by remember { mutableStateOf(false) }
+    val timeFormatter = DateTimeFormatter.ofPattern("HH時mm分")
 
     Scaffold(
         topBar = {
@@ -170,7 +189,7 @@ fun RecordScreen(
                     Row(
                         modifier = Modifier
                             .clickable(
-                                onClick = { showDialog = true }
+                                onClick = { showDateDialog = true }
                             )
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -184,7 +203,7 @@ fun RecordScreen(
                         )
                         Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
                         Text(
-                            formattedDate,
+                            selectedDate.format(dateFormatter),
                             style = MaterialTheme.typography.titleMedium,
                             maxLines = 1
                         )
@@ -193,21 +212,27 @@ fun RecordScreen(
                             contentDescription = "表示",
                             modifier = commonSize
                         )
-                        if (showDialog) {
+                        if (showDateDialog) {
+                            val datePickerState =
+                                rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
                             AlertDialog(
                                 onDismissRequest = {
-                                    showDialog = false
+                                    showDateDialog = false
                                 },
                                 text = {
                                     DatePicker(
-                                        datePickerState = datePickerState,
+                                        state = datePickerState,
                                         modifier = Modifier.fillMaxWidth()
                                     )
                                 },
                                 confirmButton = {
                                     Button(
                                         onClick = {
-                                            showDialog = false
+                                            showDateDialog = false
+                                            selectedDate = Instant.ofEpochMilli(
+                                                datePickerState.selectedDateMillis
+                                                    ?: System.currentTimeMillis()
+                                            ).atZone(ZoneId.systemDefault()).toLocalDate()
                                         }
                                     ) {
                                         Text("OK")
@@ -216,7 +241,78 @@ fun RecordScreen(
                                 dismissButton = {
                                     Button(
                                         onClick = {
-                                            showDialog = false
+                                            showDateDialog = false
+
+                                        }
+                                    ) {
+                                        Text("キャンセル")
+                                    }
+                                },
+                                properties = DialogProperties(
+                                    usePlatformDefaultWidth = false
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth(0.99f)
+                                    .height(screenHeight * 0.75f)
+                            )
+                        }
+                    }
+                    Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
+                    Row(
+                        modifier = Modifier
+                            .clickable(
+                                onClick = { showTimeDialog = true }
+                            )
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start,
+                    ) {
+                        val commonSize = Modifier.size(35.dp)
+                        Icon(
+                            imageVector = Icons.Rounded.Schedule,
+                            contentDescription = "カレンダー",
+                            modifier = commonSize
+                        )
+                        Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
+                        Text(
+                            selectedTime.format(timeFormatter),
+                            style = MaterialTheme.typography.titleMedium,
+                            maxLines = 1
+                        )
+                        Icon(
+                            imageVector = Icons.Rounded.ArrowDropDown,
+                            contentDescription = "表示",
+                            modifier = commonSize
+                        )
+                        if (showTimeDialog) {
+                            val timePickerState = rememberTimePickerState()
+                            AlertDialog(
+                                onDismissRequest = {
+                                    showTimeDialog = false
+                                },
+                                text = {
+                                    TimePicker(
+                                        state = timePickerState,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                },
+                                confirmButton = {
+                                    Button(
+                                        onClick = {
+                                            showTimeDialog = false
+                                            selectedTime = LocalTime.of(
+                                                timePickerState.hour,
+                                                timePickerState.minute
+                                            )
+                                        }
+                                    ) {
+                                        Text("OK")
+                                    }
+                                },
+                                dismissButton = {
+                                    Button(
+                                        onClick = {
+                                            showTimeDialog = false
                                         }
                                     ) {
                                         Text("キャンセル")
