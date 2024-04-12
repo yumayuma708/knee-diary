@@ -21,19 +21,20 @@ import androidx.compose.material.icons.rounded.Event
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -77,24 +78,8 @@ fun RecordScreen(
     val icons =
         listOf(Icons.Filled.WbSunny, Icons.Filled.Cloud, Icons.Filled.Umbrella, Icons.Filled.AcUnit)
     val iconIds = listOf(0, 1, 2, 3)
-
-//    val datePickerState = rememberDatePickerState()
-//    val now = ZonedDateTime.now(ZoneId.of("Asia/Tokyo"))
-//    val df = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
-//    val tf = DateTimeFormatter.ofPattern("HH時mm分")
-//    val fdate = df.format(now)
-//    val ftime = tf.format(now)
-//    val formattedDate: String = datePickerState.selectedDateMillis?.let {
-//        val localDate = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
-//        localDate.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日"))
-//    } ?: fdate
-//    val selectedTime by remember { mutableStateOf<LocalTime?>(null) }
-//    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-//    val formattedTime: String = selectedTime?.format(timeFormatter) ?: ftime
-//    var showDateDialogs by remember { mutableStateOf(false) }
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
-//    var showTimeDialogs by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var showDateDialog by remember { mutableStateOf(false) }
@@ -102,18 +87,22 @@ fun RecordScreen(
     var selectedTime by remember { mutableStateOf(LocalTime.now()) }
     var showTimeDialog by remember { mutableStateOf(false) }
     val timeFormatter = DateTimeFormatter.ofPattern("HH時mm分")
+    var memo by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
+            TopAppBar(
                 title = {
-                    Text(
-                        "痛みを記録する",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentWidth(Alignment.CenterHorizontally),
-                        style = MaterialTheme.typography.titleLarge,
-                    )
+                    Row {
+                        Box(modifier = Modifier.size(width = 24.dp, height = 24.dp)) {}
+                        Text(
+                            "痛みを記録する",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentWidth(Alignment.CenterHorizontally),
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                    }
                 },
                 actions = {
                     IconButton(
@@ -327,6 +316,14 @@ fun RecordScreen(
                             )
                         }
                     }
+                    Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
+                    OutlinedTextField(
+                        value = memo,
+                        onValueChange = { memo = it },
+                        label = { Text("メモ") },
+                        placeholder = { Text("例：右足の外側が痛い") },
+                        modifier = Modifier.height(250.dp)
+                    )
                 }
             }
         }
