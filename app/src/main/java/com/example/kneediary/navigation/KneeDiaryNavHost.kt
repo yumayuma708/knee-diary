@@ -11,6 +11,8 @@ import com.example.kneediary.ui.screens.navigated_screen.home_screen.HomeScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen.DateScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.note_screen.NoteScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.weekly_screen.WeeklyScreen
+import com.example.kneediary.ui.screens.record_screen.RecordNoteScreen
+import com.example.kneediary.ui.screens.record_screen.RecordScreen
 import com.example.kneediary.ui.screens.start_screen.StartScreen
 
 @Composable
@@ -38,6 +40,14 @@ fun KneeDiaryNavHost(
         }
         composable(route = Nav.WeeklyScreen.name) {
             WeeklyScreen()
+        }
+        composable(route = Nav.RecordScreen.name){
+            RecordScreen(
+                navController = navController
+            )
+        }
+        composable(route = Nav.RecordNoteScreen.name){
+            RecordNoteScreen()
         }
     }
 }
