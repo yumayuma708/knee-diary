@@ -325,13 +325,14 @@ fun RecordScreen(
                         onValueChange = { memo = it },
                         label = { Text("メモ") },
                         placeholder = { Text("例：右足の外側が痛い") },
-                        modifier = Modifier.height(250.dp)
+                        modifier = Modifier.height(screenHeight * 0.3f)
                     )
                     Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
                     OutlinedButton(
                         onClick = {
                             navController.navigateUp()
                             //データを保存する関数をViewModelに作成
+                            //天気を選択していないと保存できないようにする。
                         },
                         colors = ButtonDefaults.outlinedButtonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
