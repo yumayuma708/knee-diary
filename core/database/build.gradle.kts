@@ -1,7 +1,8 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp")
+//    id("com.google.devtools.ksp")
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -33,9 +34,9 @@ android {
     }
 }
 
-//ksp{
-//    arg("room.schemaLocation", "$projectDir/schemas")
-//}
+ksp{
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
 
 dependencies {
 
@@ -52,5 +53,7 @@ dependencies {
 
 //    implementation(libs.room.runtime)
 //    implementation(libs.room.ktx)
-//    ksp(libs.room.compiler)
+    ksp(libs.room.compiler)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
 }
