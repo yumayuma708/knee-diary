@@ -14,4 +14,7 @@ plugins {
     kotlin("jvm") version "1.9.0" apply false
     id ("com.github.ben-manes.versions") version "0.41.0"
     id ("nl.littlerobots.version-catalog-update") version "0.8.0"
+
+    id("androidx.room") version "2.6.1" apply false
+
 }

@@ -49,6 +49,7 @@ dependencies {
     //4/15に追加
     implementation("com.google.devtools.ksp:symbol-processing-api:1.9.10-1.0.13")
 //    ksp("androidx.room:room-compiler:2.5.0")
+
 //    implementation(libs.room.runtime)
 //    implementation(libs.room.ktx)
 //    ksp(libs.room.compiler)
