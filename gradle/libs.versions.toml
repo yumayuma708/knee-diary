@@ -40,7 +40,7 @@ hilt = "2.50"
 hiltExt = "1.1.0"
 jacoco = "0.8.7"
 junit4 = "4.13.2"
-kotlin = "1.9.21"
+kotlin = "1.8.10"
 kotlinxCoroutines = "1.7.3"
 kotlinxDatetime = "0.5.0"
 kotlinxSerializationJson = "1.6.0"
@@ -69,6 +69,13 @@ hilt-navigation-compose = "1.0.0"
 hilt-complier = "1.0.0"
 room = "2.6.1"
 ksp = "1.9.23-1.0.20"
+compileSdk = "34"
+minSdk = "30"
+targetSdk = "34"
+protoliteWellKnownTypes = "18.0.0"
+junit = "4.13.2"
+androidx-test-ext-junit = "1.1.5"
+material = "1.11.0"
 
 
 [libraries]
@@ -187,6 +194,10 @@ hilt-android-gradle-plagin = { group = "com.google.dagger", name = "hilt-android
 
 #room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-complier = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypes" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 #room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 
 [plugins]

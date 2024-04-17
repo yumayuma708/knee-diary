@@ -8,7 +8,7 @@ data class KneeRecord(
     val time: Date,
     val isRight: Boolean,
     val painLevel: Int,
-    val whether: Int,
+    val weather: Int,
     val note: String,
     val createdAt: Date,
     val updatedAt: Date,

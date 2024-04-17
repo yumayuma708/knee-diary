@@ -1,7 +1,6 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-//    id("com.google.devtools.ksp")
     alias(libs.plugins.ksp)
 }
 
@@ -43,16 +42,15 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
+
+    implementation(libs.protolite.well.known.types)
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     //4/15に追加
     implementation("com.google.devtools.ksp:symbol-processing-api:1.9.10-1.0.13")
-//    ksp("androidx.room:room-compiler:2.5.0")
-
-//    implementation(libs.room.runtime)
-//    implementation(libs.room.ktx)
     ksp(libs.room.compiler)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
