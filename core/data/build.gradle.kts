@@ -34,10 +34,16 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:database"))
+    implementation(project(":core:model"))
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
+    implementation(libs.hilt.android)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
