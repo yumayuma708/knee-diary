@@ -1,6 +1,7 @@
 package com.example.kneediary.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,6 +12,7 @@ import com.example.kneediary.ui.screens.navigated_screen.home_screen.note_screen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.weekly_screen.WeeklyScreen
 import com.example.kneediary.ui.screens.record_screen.RecordNoteScreen
 import com.example.kneediary.ui.screens.record_screen.record_screen.RecordScreen
+import com.example.kneediary.ui.screens.record_screen.record_screen.RecordScreenViewModel
 import com.example.kneediary.ui.screens.start_screen.StartScreen
 
 @Composable
@@ -40,7 +42,9 @@ fun KneeDiaryNavHost(
             WeeklyScreen()
         }
         composable(route = Nav.RecordScreen.name){
+            val viewModel: RecordScreenViewModel = hiltViewModel()
             RecordScreen(
+                viewModel = viewModel,
                 back = {
                     navController.popBackStack()
                 }

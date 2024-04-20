@@ -191,7 +191,7 @@ ksp-sympbol-processing-api = { group = "com.google.devtools.ksp", name = "symbol
 hilt-android-complier = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt-complier" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
 #hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt-complier" }
-hilt-android-gradle-plagin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hilt-android" }
+hilt-android-gradle-plugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hilt-android" }
 
 #room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-complier = { group = "androidx.room", name = "room-compiler", version.ref = "room" }

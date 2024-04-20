@@ -1,4 +1,7 @@
 buildscript{
+    dependencies{
+        classpath(libs.hilt.android.gradle.plugin)
+    }
 }
 ext {
     extra["compose_version"] = "1.2.0"
