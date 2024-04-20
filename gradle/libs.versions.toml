@@ -7,7 +7,7 @@ androidTools = "31.2.0"
 androidxActivity = "1.8.0"
 androidxAppCompat = "1.6.1"
 androidxBrowser = "1.6.0"
-androidxComposeBom = "2023.10.01"
+androidxComposeBom = "2024.04.00"
 androidxComposeCompiler = "1.5.7"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 androidxCore = "1.12.0"
@@ -68,7 +68,7 @@ hilt-android= "2.48"
 hilt-navigation-compose = "1.0.0"
 hilt-complier = "1.0.0"
 room = "2.6.1"
-ksp = "1.9.23-1.0.20"
+ksp = "1.9.10-1.0.13"
 compileSdk = "34"
 minSdk = "30"
 targetSdk = "34"
@@ -76,6 +76,7 @@ protoliteWellKnownTypes = "18.0.0"
 junit = "4.13.2"
 androidx-test-ext-junit = "1.1.5"
 material = "1.11.0"
+activity-compose = "1.8.2"
 
 
 [libraries]
@@ -199,6 +200,8 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 #room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt-android" }
+activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

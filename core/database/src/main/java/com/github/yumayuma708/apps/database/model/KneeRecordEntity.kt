@@ -15,7 +15,7 @@ data class KneeRecordEntity(
     val time: Long,
     val isRight: Boolean,
     val painLevel: Int,
-    val weather: Int,
+    val weather: String,
     val note: String,
     val createdAt: Long,
     val updatedAt: Long,

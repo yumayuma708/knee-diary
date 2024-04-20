@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f0975a2a39df4f8068d37fb7c6c4217a",
+    "identityHash": "08297e46da20074396816e43fecd6b4b",
     "entities": [
       {
         "tableName": "knee_record",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER NOT NULL, `time` INTEGER NOT NULL, `isRight` INTEGER NOT NULL, `painLevel` INTEGER NOT NULL, `weather` INTEGER NOT NULL, `note` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER NOT NULL, `time` INTEGER NOT NULL, `isRight` INTEGER NOT NULL, `painLevel` INTEGER NOT NULL, `weather` TEXT NOT NULL, `note` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -41,7 +41,7 @@
           {
             "fieldPath": "weather",
             "columnName": "weather",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -76,7 +76,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f0975a2a39df4f8068d37fb7c6c4217a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '08297e46da20074396816e43fecd6b4b')"
     ]
   }
 }
