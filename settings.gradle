@@ -15,3 +15,6 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Knee Diary"
 include ':app'
+include ':core:model'
+include ':core:database'
+include ':core:data'

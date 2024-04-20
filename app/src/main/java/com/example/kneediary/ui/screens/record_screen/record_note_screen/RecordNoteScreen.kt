@@ -11,10 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AcUnit
-import androidx.compose.material.icons.filled.Cloud
-import androidx.compose.material.icons.filled.Umbrella
-import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Event
@@ -30,10 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
@@ -46,7 +39,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,37 +52,21 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecordScreen(
+fun RecordNoteScreen(
     navController: NavHostController,
 ) {
-    var state by remember { mutableStateOf(true) }
-    var pain by remember { mutableStateOf(0f) }
-    val customOrange = Color(1f, 165f / 255f, 0f)
-    val sliderColor = when {
-        pain < 0.25f -> Color.Blue
-        pain < 0.5f -> Color.Green
-        pain < 0.75f -> Color.Yellow
-        pain < 1f -> customOrange
-        else -> Color.Red
-    }
-    var selectedIconId by remember { mutableStateOf<Int?>(null) }
-    val icons =
-        listOf(Icons.Filled.WbSunny, Icons.Filled.Cloud, Icons.Filled.Umbrella, Icons.Filled.AcUnit)
-    val iconIds = listOf(0, 1, 2, 3)
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-    val datePickerState = rememberDatePickerState()
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var note by remember { mutableStateOf("") }
     var showDateDialog by remember { mutableStateOf(false) }
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
     var selectedTime by remember { mutableStateOf(LocalTime.now()) }
     var showTimeDialog by remember { mutableStateOf(false) }
     val timeFormatter = DateTimeFormatter.ofPattern("HH時mm分")
-    var memo by remember { mutableStateOf("") }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
 
     Scaffold(
         topBar = {
@@ -99,7 +75,7 @@ fun RecordScreen(
                     Row {
                         Box(modifier = Modifier.size(width = 24.dp, height = 24.dp)) {}
                         Text(
-                            "痛みを記録する",
+                            "メモを入力します",
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .wrapContentWidth(Alignment.CenterHorizontally),
@@ -110,7 +86,7 @@ fun RecordScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            navController.navigate(Nav.HomeScreen.name)
+                            navController.popBackStack()
                         }) {
                         Icon(Icons.Rounded.Close, contentDescription = "閉じる")
                     }
@@ -119,64 +95,14 @@ fun RecordScreen(
         },
         content = { paddingValues ->
             Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.padding(start = 60.dp, end = 60.dp)
+                modifier = Modifier.fillMaxWidth().padding(start = 60.dp, end = 60.dp),
+                contentAlignment = Alignment.Center
             ) {
                 Column(
                     modifier = Modifier.padding(paddingValues),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Center,
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        RadioButton(selected = state, onClick = { state = true })
-                        Text("左足")
-                        Box(modifier = Modifier.size(width = 20.dp, height = 20.dp))
-                        RadioButton(selected = !state, onClick = { state = false })
-                        Text("右足")
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start
-                    ) { Text("足の痛み") }
-                    Slider(
-                        value = pain,
-                        onValueChange = { newValue ->
-                            pain = newValue.coerceIn(0f, 4f)
-                        },
-                        steps = 3,
-                        colors = SliderDefaults.colors(
-                            activeTrackColor = sliderColor,
-                            thumbColor = sliderColor,
-                            inactiveTrackColor = sliderColor.copy(alpha = 0.24f)
-                        )
-                    )
-                    Text(text = ((pain * 4).roundToInt() + 1).toString())
-                    Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                    ) {
-                        iconIds.forEach { id ->
-                            IconButton(
-                                onClick = {
-                                    selectedIconId = id
-                                }
-                            ) {
-                                Icon(
-                                    modifier = Modifier
-                                        .size(48.dp),
-                                    imageVector = icons[id],
-                                    contentDescription = null,
-                                    tint = if (selectedIconId == id) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.onSurface.copy(
-                                        alpha = 0.6f
-                                    )
-                                )
-                            }
-                        }
-                    }
                     Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
                     Row(
                         modifier = Modifier
@@ -321,35 +247,34 @@ fun RecordScreen(
                     }
                     Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
                     OutlinedTextField(
-                        value = memo,
-                        onValueChange = { memo = it },
+                        value = note,
+                        onValueChange = { note = it },
                         label = { Text("メモ") },
-                        placeholder = { Text("例：右足の外側が痛い") },
-                        modifier = Modifier.height(screenHeight * 0.3f)
+                        placeholder = { Text("例：来週のどこかでリハビリセンターに行く。") },
+                        modifier = Modifier.height(screenHeight * 0.55f)
                     )
                     Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
                     OutlinedButton(
                         onClick = {
                             navController.navigateUp()
-                            //データを保存する関数をViewModelに作成
-                            //天気を選択していないと保存できないようにする。
+                            //メモを保存する関数をViewModelに作成
+                            //何かテキストフィールドに入力されていないと保存できないようにする。
                         },
                         colors = ButtonDefaults.outlinedButtonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary
                         )
                     ) {
-                    Text("保存", style = TextStyle(color = MaterialTheme.colorScheme.onPrimary))
+                        Text("保存", style = TextStyle(color = MaterialTheme.colorScheme.onPrimary))
                     }
                 }
             }
-        }
-    )
+        })
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun PreviewRecordScreen() {
+fun RecordNoteScreenPreview() {
     val navController = rememberNavController()
-    RecordScreen(navController = navController)
+    RecordNoteScreen(navController = navController)
 }

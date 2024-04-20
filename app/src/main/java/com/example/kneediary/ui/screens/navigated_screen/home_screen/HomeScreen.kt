@@ -31,7 +31,6 @@ import com.example.kneediary.navigation.Nav
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen.DateScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.note_screen.NoteScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.weekly_screen.WeeklyScreen
-import com.example.kneediary.ui.screens.record_screen.RecordScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

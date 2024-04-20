@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -37,8 +38,9 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.2"
+        kotlinCompilerExtensionVersion = "1.5.0"
     }
+    //1.5.1かも?
     packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -49,7 +51,9 @@ android {
 val compose_version: String by rootProject.extra
 
 dependencies {
-
+    implementation (project(":core:data"))
+    implementation (project(":core:database"))
+    implementation (project(":core:model"))
     implementation ("androidx.core:core-ktx:1.12.0")
     implementation ("org.jetbrains.kotlin:kotlin-bom:1.8.0")
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
@@ -74,4 +78,9 @@ dependencies {
     debugImplementation ("androidx.compose.ui:ui-test-manifest")
     implementation ("androidx.compose.ui:ui-text-google-fonts:1.6.5")
     implementation ("androidx.compose.material:material-icons-extended:1.6.5")
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    ksp(libs.hilt.android.complier)
+    implementation(libs.activity.compose)
 }
