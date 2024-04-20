@@ -41,7 +41,9 @@ fun KneeDiaryNavHost(
         }
         composable(route = Nav.RecordScreen.name){
             RecordScreen(
-                navController = navController
+                back = {
+                    navController.popBackStack()
+                }
             )
         }
         composable(route = Nav.RecordNoteScreen.name){
