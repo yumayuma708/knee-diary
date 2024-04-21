@@ -3,6 +3,8 @@ package com.repository
 import com.github.yumayuma708.apps.database.dao.KneeRecordDao
 import com.github.yumayuma708.apps.database.model.KneeRecordEntity
 import com.github.yumayuma708.apps.model.KneeRecord
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.util.Date
 import javax.inject.Inject
 
@@ -40,5 +42,28 @@ class LocalKneeRecordRepository @Inject constructor(
             createdAt = kneeRecord.createdAt,
             updatedAt = kneeRecord.updatedAt,
         )
+    }
+
+    //LocalKneeRecordRepositoryは、データベースからKneeRecordを取ってくるのが仕事
+    //KneeRecordDaoを使って、Flow<List<KneeRecord>>を返すようにする
+    //RoomのDaoは、Flowで結果を返す仕組みがあるので、その仕組みを使っている。
+    override fun getAll(): Flow<List<KneeRecord>> {
+        //KneeRecordDaoに、getAll()というメソッドを追加する
+        return kneeRecordDao.getAll().map { items ->
+            //map関数で、List<KneeRecordEntity>をList<KneeRecord>に変換する
+            items.map { item ->
+                KneeRecord(
+                    id = item.id,
+                    date = item.date,
+                    time = item.time,
+                    isRight = item.isRight,
+                    painLevel = item.painLevel,
+                    weather = item.weather,
+                    note = item.note,
+                    createdAt = item.createdAt,
+                    updatedAt = item.updatedAt,
+                )
+            }
+        }
     }
 }
