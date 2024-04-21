@@ -57,4 +57,8 @@ class RecordScreenViewModel @Inject constructor(
             }
         }
     }
+
+    fun moveToIdle() {
+        _uiState.value = UiState.Idle
+    }
 }

@@ -7,6 +7,9 @@ import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.KneeDiaryTheme
 import com.example.kneediary.navigation.KneeDiaryNavHost
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

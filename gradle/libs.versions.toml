@@ -40,7 +40,7 @@ hilt = "2.50"
 hiltExt = "1.1.0"
 jacoco = "0.8.7"
 junit4 = "4.13.2"
-kotlin = "1.8.10"
+kotlin = "1.9.0"
 kotlinxCoroutines = "1.7.3"
 kotlinxDatetime = "0.5.0"
 kotlinxSerializationJson = "1.6.0"
@@ -64,10 +64,10 @@ recyclerview = "1.3.2"
 
 #追加
 navigation-compose = "2.7.2"
-hilt-android= "2.48"
+hilt-android= "2.50"
 hilt-navigation-compose = "1.0.0"
 hilt-complier = "1.0.0"
-room = "2.6.1"
+room = "2.5.2"
 ksp = "1.9.10-1.0.13"
 compileSdk = "34"
 minSdk = "30"
@@ -76,7 +76,13 @@ protoliteWellKnownTypes = "18.0.0"
 junit = "4.13.2"
 androidx-test-ext-junit = "1.1.5"
 material = "1.11.0"
-activity-compose = "1.8.2"
+activity-compose = "1.7.2"
+
+#更に追加
+agp = "8.3.0-alpha05"
+core-ktx = "1.12.0"
+espresso-core = "3.5.1"
+lifecycle-runtime-compose = "2.6.2"
 
 
 [libraries]
@@ -188,10 +194,10 @@ androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview"
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose" }
 ksp-sympbol-processing-api = { group = "com.google.devtools.ksp", name = "symbol-processing-api", version.ref = "ksp" }
 #hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt-android" }
-hilt-android-complier = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt-complier" }
+#hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt-complier" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
 #hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt-complier" }
-hilt-android-gradle-plagin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hilt-android" }
+hilt-android-gradle-plugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hilt-android" }
 
 #room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-complier = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
