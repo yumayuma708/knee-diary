@@ -2,12 +2,14 @@ package com.example.kneediary.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.HomeScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen.DateScreen
+import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen.DateScreenViewModel
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.note_screen.NoteScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.weekly_screen.WeeklyScreen
 import com.example.kneediary.ui.screens.record_screen.RecordNoteScreen
@@ -33,7 +35,10 @@ fun KneeDiaryNavHost(
             )
         }
         composable(route = Nav.DateScreen.name) {
-            DateScreen()
+            val viewModel: DateScreenViewModel = hiltViewModel()
+            DateScreen(
+                viewModel = viewModel,
+            )
         }
         composable(route = Nav.NoteScreen.name) {
             NoteScreen()
