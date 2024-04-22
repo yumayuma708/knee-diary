@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AcUnit
@@ -17,11 +20,13 @@ import androidx.compose.material.icons.rounded.WbSunny
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.yumayuma708.apps.model.KneeRecord
@@ -103,27 +108,44 @@ fun KneeRecordListItem(kneeRecord: KneeRecord) {
         "sunny" -> Icons.Rounded.WbSunny
         "cloudy" -> Icons.Rounded.WbCloudy
         "rainy" -> Icons.Rounded.Umbrella
-        "snow" -> Icons.Rounded.AcUnit
+        "snowy" -> Icons.Rounded.AcUnit
         else -> Icons.Rounded.Help
     }
-    ListItem(
-        headlineContent = {
-            Column {
-                Row {
-                    Text(text = "$definedMonth $definedDay $definedDate $definedTime")
-                    Box(modifier = Modifier.padding(8.dp))
-                    Icon(imageVector = weatherIconId, contentDescription = "weather")
+    val painLevel = kneeRecord.painLevel
+    val isRight = when (kneeRecord.isRight) {
+        true -> "右"
+        false -> "左"
+    }
+    val note = kneeRecord.note.ifEmpty {
+        "メモなし"
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(0.9f)
+            .height(100.dp)
+    ) {
+        ListItem(
+            headlineContent = {
+                Column {
+                    Row {
+                        Text(text = "$definedMonth $definedDay $definedDate $definedTime")
+                        Box(modifier = Modifier.padding(8.dp))
+                        Icon(imageVector = weatherIconId, contentDescription = "weather")
+                    }
+                    HorizontalDivider()
                 }
-                HorizontalDivider ()
+            },
+            leadingContent = {
+                Text(painLevel.toString())
+            },
+            supportingContent = {
+                Text(
+                    "$isRight：$note",
+                    style = MaterialTheme.typography.labelMedium
+                )
             }
-        },
-        leadingContent = {
-            Text(kneeRecord.painLevel.toString())
-        },
-        supportingContent = {
-            Text(kneeRecord.isRight.toString())
-        }
-    )
+        )
+    }
 }
 
 @Preview
