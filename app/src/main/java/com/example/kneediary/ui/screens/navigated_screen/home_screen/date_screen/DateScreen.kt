@@ -2,31 +2,42 @@
 
 package com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.rounded.AcUnit
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material.icons.rounded.Help
+import androidx.compose.material.icons.rounded.MoodBad
+import androidx.compose.material.icons.rounded.SentimentDissatisfied
+import androidx.compose.material.icons.rounded.SentimentNeutral
+import androidx.compose.material.icons.rounded.SentimentSatisfied
+import androidx.compose.material.icons.rounded.SentimentVeryDissatisfied
 import androidx.compose.material.icons.rounded.Umbrella
 import androidx.compose.material.icons.rounded.WbCloudy
 import androidx.compose.material.icons.rounded.WbSunny
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.yumayuma708.apps.model.KneeRecord
@@ -111,7 +122,14 @@ fun KneeRecordListItem(kneeRecord: KneeRecord) {
         "snowy" -> Icons.Rounded.AcUnit
         else -> Icons.Rounded.Help
     }
-    val painLevel = kneeRecord.painLevel
+    val painIcon = when (kneeRecord.painLevel) {
+        1 -> Icons.Rounded.SentimentSatisfied
+        2 -> Icons.Rounded.SentimentNeutral
+        3 -> Icons.Rounded.SentimentDissatisfied
+        4 -> Icons.Rounded.MoodBad
+        5 -> Icons.Rounded.SentimentVeryDissatisfied
+        else -> Icons.Rounded.Face
+    }
     val isRight = when (kneeRecord.isRight) {
         true -> "右"
         false -> "左"
@@ -121,37 +139,80 @@ fun KneeRecordListItem(kneeRecord: KneeRecord) {
     }
     Box(
         modifier = Modifier
-            .fillMaxWidth(0.9f)
+            .fillMaxWidth()
             .height(100.dp)
     ) {
         ListItem(
             headlineContent = {
                 Column {
-                    Row {
-                        Text(text = "$definedMonth $definedDay $definedDate $definedTime")
-                        Box(modifier = Modifier.padding(8.dp))
-                        Icon(imageVector = weatherIconId, contentDescription = "weather")
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "$definedMonth $definedDay $definedDate",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Box(modifier = Modifier.padding(4.dp))
+                        Icon(
+                            imageVector = weatherIconId,
+                            contentDescription = "weather",
+                            modifier = Modifier.size(22.dp),
+                        )
+                        Box(modifier = Modifier.padding(4.dp))
+                        Text(
+                            text = definedTime,
+                            style = MaterialTheme.typography.titleLarge
+                        )
                     }
-                    HorizontalDivider()
                 }
             },
             leadingContent = {
-                Text(painLevel.toString())
+                Box(
+                    modifier = Modifier.fillMaxHeight(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = painIcon,
+                        contentDescription = "Localized description",
+                    )
+                }
             },
             supportingContent = {
                 Text(
                     "$isRight：$note",
-                    style = MaterialTheme.typography.labelMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
+            },
+            trailingContent = {
+                Row (
+                    horizontalArrangement = Arrangement.End
+                ){
+                    IconButton(
+                        onClick = {
+                            //編集画面に遷移
+                        }
+                    ) {
+                        Icon(imageVector =Icons.Rounded.Edit, contentDescription = "編集")
+                    }
+
+                    IconButton(
+                        onClick = {
+                            //削除の確認のポップアップを表示
+                        }
+                    ) {
+                        Icon(imageVector =Icons.Rounded.Delete, contentDescription = "削除")
+                    }
+                }
             }
         )
     }
 }
-
-@Preview
-@Composable
-fun PreviewDateScreen() {
-    DateScreen(
-        kneeRecordList = emptyList(),
-    )
-}
+    @Preview
+    @Composable
+    fun PreviewDateScreen() {
+        DateScreen(
+            kneeRecordList = emptyList(),
+        )
+    }
