@@ -1,6 +1,7 @@
 package com.repository
 
 import com.github.yumayuma708.apps.model.KneeRecord
+import kotlinx.coroutines.flow.Flow
 
 //createメソッドは、KneeRecordオブジェクトを返す。
 interface KneeRecordRepository {
@@ -12,4 +13,6 @@ interface KneeRecordRepository {
         weather: String,
         note: String
     ): KneeRecord
+
+    fun getAll(): Flow<List<KneeRecord>>
 }

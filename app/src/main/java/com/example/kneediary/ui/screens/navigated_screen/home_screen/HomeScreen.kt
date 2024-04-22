@@ -26,11 +26,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.kneediary.navigation.Nav
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen.DateScreen
+import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen.DateScreenViewModel
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.note_screen.NoteScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.weekly_screen.WeeklyScreen
+import com.repository.KneeRecordRepository
+import com.repository.LocalKneeRecordRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,12 +87,18 @@ fun HomeScreen(
                 )
             }
         },
-        content = { innerPadding ->
+        content = { paddingValues ->
                 when (selectedItem) {
-                    0 -> DateScreen(modifier = Modifier.padding(innerPadding))
-                    1 -> WeeklyScreen(modifier = Modifier.padding(innerPadding))
-                    2 -> NoteScreen(modifier = Modifier.padding(innerPadding))
-                    else -> Text("未定義の画面です", modifier = Modifier.padding(innerPadding))
+                    0 -> {
+                        val viewModel: DateScreenViewModel = hiltViewModel()
+                        DateScreen(
+                        modifier = Modifier.padding(paddingValues),
+                        viewModel = viewModel,
+                        )
+                    }
+                    1 -> WeeklyScreen(modifier = Modifier.padding(paddingValues))
+                    2 -> NoteScreen(modifier = Modifier.padding(paddingValues))
+                    else -> Text("未定義の画面です", modifier = Modifier.padding(paddingValues))
                 }
         },
         bottomBar = {
