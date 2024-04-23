@@ -102,7 +102,7 @@ private fun RecordScreen(
     back: () -> Unit,
 ) {
 
-    var isRight by remember { mutableStateOf(true) }
+    var isRight by remember { mutableStateOf(false) }
 
     var pain by remember { mutableStateOf(0f) }
     val customOrange = Color(1f, 165f / 255f, 0f)
@@ -190,10 +190,10 @@ private fun RecordScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        RadioButton(selected = isRight, onClick = { isRight = false })
+                        RadioButton(selected = !isRight, onClick = { isRight = false })
                         Text("左足")
                         Box(modifier = Modifier.size(width = 20.dp, height = 20.dp))
-                        RadioButton(selected = !isRight, onClick = { isRight = true })
+                        RadioButton(selected = isRight, onClick = { isRight = true })
                         Text("右足")
                     }
                     Row(
