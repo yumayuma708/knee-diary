@@ -39,7 +39,11 @@ import androidx.compose.ui.text.style.TextOverflow
 
 
 @Composable
-fun KneeRecordListItem(kneeRecord: KneeRecord) {
+fun KneeRecordListItem(
+    kneeRecord: KneeRecord,
+    onClick : () -> Unit,
+) {
+
     fun extractDateTime(datePlusTime: Long): List<String> {
         val datePlusTimeDate = Date(datePlusTime)
         val datePlusTimeString = datePlusTimeDate.toString()
@@ -158,7 +162,7 @@ fun KneeRecordListItem(kneeRecord: KneeRecord) {
                 ){
                     IconButton(
                         onClick = {
-                            //編集画面に遷移
+                            onClick()
                         }
                     ) {
                         Icon(imageVector =Icons.Rounded.Edit, contentDescription = "編集")
