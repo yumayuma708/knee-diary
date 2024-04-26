@@ -14,5 +14,7 @@ interface KneeRecordRepository {
         note: String
     ): KneeRecord
 
+    suspend fun getById(id: Long): KneeRecord?
+
     fun getAll(): Flow<List<KneeRecord>>
 }
