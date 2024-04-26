@@ -42,8 +42,8 @@ fun KneeDiaryNavHost(
             val viewModel: DateScreenViewModel = hiltViewModel()
             DateScreen(
                 viewModel = viewModel,
-                toEdit = {id ->
-                    navController.navigate("todo/$id")
+                toEdit = {kneeRecordId ->
+                    navController.navigate("/edit/$kneeRecordId")
                 }
             )
         }
