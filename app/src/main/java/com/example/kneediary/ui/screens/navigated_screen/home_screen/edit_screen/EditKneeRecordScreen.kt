@@ -118,7 +118,6 @@ private fun EditKneeRecordScreen(
             Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDate()
         }
     }
-
     val setDate: (Long) -> Unit = { newDate ->
         date = newDate
         selectedDate = Instant.ofEpochMilli(newDate).atZone(ZoneId.systemDefault()).toLocalDate()
@@ -129,7 +128,26 @@ private fun EditKneeRecordScreen(
     }
 
     var selectedTime by remember { mutableStateOf(LocalTime.now()) }
-    val time: Long = selectedTime.toNanoOfDay() / 1_000_000
+    var time by remember { mutableStateOf<Long>(System.currentTimeMillis()) }
+    LaunchedEffect(time) {
+        selectedTime = if (time == 0L) {
+            println("timeが0なので、現在の時刻を使用します")
+            LocalTime.now()
+        } else {
+            Instant.ofEpochMilli(time).atZone(ZoneId.of("UTC")).toLocalTime()
+        }
+    }
+    var showTimeDialog by remember { mutableStateOf(false) }
+    val changeTimeDialogState: () -> Unit = {
+        showTimeDialog = !showTimeDialog
+    }
+    val setTime: (LocalTime) -> Unit = { newTime ->
+        selectedTime = newTime
+        showTimeDialog = false
+    }
+
+
+
     var note by remember { mutableStateOf("") }
 
     Scaffold { innerPadding ->
@@ -177,6 +195,10 @@ private fun EditKneeRecordScreen(
                     showDateDialog = showDateDialog,
                     changeDateDialogState = changeDateDialogState,
                     selectedDate = selectedDate,
+                    selectedTime = selectedTime,
+                    showTimeDialog = showTimeDialog,
+                    changeTimeDialogState = changeTimeDialogState,
+                    setTime = setTime,
                 )
             }
 
@@ -205,7 +227,7 @@ private fun EditKneeRecordScreen(
                     else -> null
                 }
                 date = uiState.kneeRecord.date
-                selectedTime = LocalTime.ofNanoOfDay(uiState.kneeRecord.time * 1_000_000)
+                time = uiState.kneeRecord.time
                 note = uiState.kneeRecord.note
                 moveToIdle()
             }
@@ -242,13 +264,15 @@ fun EditKneeRecordForm(
     showDateDialog: Boolean,
     changeDateDialogState: () -> Unit,
     selectedDate: LocalDate,
+    selectedTime: LocalTime,
+    showTimeDialog: Boolean,
+    changeTimeDialogState: () -> Unit,
+    setTime: (LocalTime) -> Unit,
 ) {
 
     val icons =
         listOf(Icons.Filled.WbSunny, Icons.Filled.Cloud, Icons.Filled.Umbrella, Icons.Filled.AcUnit)
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
-    var showTimeDialog by remember { mutableStateOf(false) }
-    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
     val timeFormatter = DateTimeFormatter.ofPattern("HH時mm分")
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
@@ -388,7 +412,7 @@ fun EditKneeRecordForm(
             Row(
                 modifier = Modifier
                     .clickable(
-                        onClick = { showTimeDialog = true }
+                        onClick = changeTimeDialogState
                     )
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -415,7 +439,7 @@ fun EditKneeRecordForm(
                     val timePickerState = rememberTimePickerState()
                     AlertDialog(
                         onDismissRequest = {
-                            showTimeDialog = false
+                            changeTimeDialogState
                         },
                         text = {
                             TimePicker(
@@ -426,21 +450,17 @@ fun EditKneeRecordForm(
                         confirmButton = {
                             Button(
                                 onClick = {
-                                    showTimeDialog = false
-                                    selectedTime = LocalTime.of(
-                                        timePickerState.hour,
-                                        timePickerState.minute
-                                    )
+                                    val newTime = LocalTime.of(timePickerState.hour, timePickerState.minute)
+                                    setTime(newTime)
                                 }
+
                             ) {
                                 Text("OK")
                             }
                         },
                         dismissButton = {
                             Button(
-                                onClick = {
-                                    showTimeDialog = false
-                                }
+                                onClick = changeTimeDialogState
                             ) {
                                 Text("キャンセル")
                             }
