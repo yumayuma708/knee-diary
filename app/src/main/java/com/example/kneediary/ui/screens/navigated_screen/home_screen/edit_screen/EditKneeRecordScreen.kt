@@ -39,7 +39,6 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,7 +49,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import androidx.media3.common.util.Log
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -82,7 +80,6 @@ private fun EditKneeRecordScreen(
 ) {
     var isRight by remember { mutableStateOf(false) }
     var pain by remember { mutableStateOf(0f) }
-
     val customOrange = Color(1f, 165f / 255f, 0f)
     val sliderColor = when {
         pain < 0.25f -> Color.Blue
@@ -95,7 +92,12 @@ private fun EditKneeRecordScreen(
         pain = newValue
         println("Updated pain: $pain")
     }
+
+    val iconIds = listOf(0, 1, 2, 3)
     var selectedIconId by remember { mutableStateOf<Int?>(null) }
+    val setWeather: (Int) -> Unit = { id ->
+        selectedIconId = id
+    }
     val weather = when (selectedIconId) {
         0 -> "sunny"
         1 -> "cloudy"
@@ -143,11 +145,13 @@ private fun EditKneeRecordScreen(
                     note = note,
                     setNote = { note = it },
                     date = date,
+                    iconIds = iconIds,
+                    selectedIconId = selectedIconId,
                     weather = weather,
-                    setWeather = { selectedIconId = it },
+                    setWeather = setWeather,
                     pain = pain,
                     setPain = setPain,
-                    sliderColor = sliderColor
+                    sliderColor = sliderColor,
                 )
             }
 
@@ -203,17 +207,17 @@ fun EditKneeRecordForm(
     setNote: (String) -> Unit,
     isRight: Boolean,
     setIsRight: () -> Unit,
+    iconIds: List<Int>,
+    selectedIconId: Int?,
     weather: String,
     setWeather: (Int) -> Unit,
     pain: Float,
     setPain: (Float) -> Unit,
     sliderColor: Color,
 ) {
-    var selectedIconId by remember { mutableStateOf<Int?>(null) }
 
     val icons =
         listOf(Icons.Filled.WbSunny, Icons.Filled.Cloud, Icons.Filled.Umbrella, Icons.Filled.AcUnit)
-    val iconIds = listOf(0, 1, 2, 3)
     var showDateDialog by remember { mutableStateOf(false) }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
@@ -266,18 +270,23 @@ fun EditKneeRecordForm(
             ) {
                 iconIds.forEach { id ->
                     IconButton(
-                        onClick = {
-                            selectedIconId = id
-                        }
+                        onClick = { setWeather(id) }
                     ) {
                         Icon(
                             modifier = Modifier
                                 .size(48.dp),
                             imageVector = icons[id],
                             contentDescription = null,
-                            tint = if (selectedIconId == id) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.onSurface.copy(
-                                alpha = 0.6f
-                            )
+                            tint = if (selectedIconId == id)
+                                MaterialTheme
+                                    .colorScheme
+                                    .primaryContainer
+                            else MaterialTheme
+                                .colorScheme
+                                .onSurface
+                                .copy(
+                                    alpha = 0.6f
+                                )
                         )
                     }
                 }

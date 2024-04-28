@@ -113,9 +113,7 @@ private fun RecordScreen(
         pain < 1f -> customOrange
         else -> Color.Red
     }
-//    //painLevelをInt型で定義
-//    val painLevel = ((pain * 4).roundToInt() + 1)
-
+    val iconIds = listOf(0, 1, 2, 3)
     var selectedIconId by remember { mutableStateOf<Int?>(null) }
     //weatherを定義
     val weather = when (selectedIconId) {
@@ -127,7 +125,6 @@ private fun RecordScreen(
     }
     val icons =
         listOf(Icons.Filled.WbSunny, Icons.Filled.Cloud, Icons.Filled.Umbrella, Icons.Filled.AcUnit)
-    val iconIds = listOf(0, 1, 2, 3)
 
 //    val datePickerState = rememberDatePickerState()
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
