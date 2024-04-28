@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_EXPRESSION")
+
 package com.example.kneediary.ui.screens.navigated_screen.home_screen.edit_screen
 
 import androidx.compose.foundation.clickable
@@ -105,8 +107,27 @@ private fun EditKneeRecordScreen(
         3 -> "snowy"
         else -> ""
     }
+    var showDateDialog by remember { mutableStateOf(false) }
+    var date by remember { mutableStateOf<Long>(System.currentTimeMillis()) }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    val date: Long = selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    LaunchedEffect(date) {
+        selectedDate = if (date == 0L) {
+            println("dateが0なので、現在の日付を使用します")
+            LocalDate.now()
+        } else {
+            Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDate()
+        }
+    }
+
+    val setDate: (Long) -> Unit = { newDate ->
+        date = newDate
+        selectedDate = Instant.ofEpochMilli(newDate).atZone(ZoneId.systemDefault()).toLocalDate()
+        showDateDialog = false
+    }
+    val changeDateDialogState: () -> Unit = {
+        showDateDialog = !showDateDialog
+    }
+
     var selectedTime by remember { mutableStateOf(LocalTime.now()) }
     val time: Long = selectedTime.toNanoOfDay() / 1_000_000
     var note by remember { mutableStateOf("") }
@@ -152,6 +173,10 @@ private fun EditKneeRecordScreen(
                     pain = pain,
                     setPain = setPain,
                     sliderColor = sliderColor,
+                    setDate = setDate,
+                    showDateDialog = showDateDialog,
+                    changeDateDialogState = changeDateDialogState,
+                    selectedDate = selectedDate,
                 )
             }
 
@@ -179,9 +204,7 @@ private fun EditKneeRecordScreen(
                     "snowy" -> 3
                     else -> null
                 }
-                selectedDate =
-                    Instant.ofEpochMilli(uiState.kneeRecord.date).atZone(ZoneId.systemDefault())
-                        .toLocalDate()
+                date = uiState.kneeRecord.date
                 selectedTime = LocalTime.ofNanoOfDay(uiState.kneeRecord.time * 1_000_000)
                 note = uiState.kneeRecord.note
                 moveToIdle()
@@ -198,6 +221,7 @@ private fun EditKneeRecordScreen(
     }
 }
 
+@Suppress("UNUSED_EXPRESSION")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditKneeRecordForm(
@@ -214,12 +238,14 @@ fun EditKneeRecordForm(
     pain: Float,
     setPain: (Float) -> Unit,
     sliderColor: Color,
+    setDate: (Long) -> Unit,
+    showDateDialog: Boolean,
+    changeDateDialogState: () -> Unit,
+    selectedDate: LocalDate,
 ) {
 
     val icons =
         listOf(Icons.Filled.WbSunny, Icons.Filled.Cloud, Icons.Filled.Umbrella, Icons.Filled.AcUnit)
-    var showDateDialog by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
     var showTimeDialog by remember { mutableStateOf(false) }
     var selectedTime by remember { mutableStateOf(LocalTime.now()) }
@@ -295,7 +321,7 @@ fun EditKneeRecordForm(
             Row(
                 modifier = Modifier
                     .clickable(
-                        onClick = { showDateDialog = true }
+                        onClick = changeDateDialogState
                     )
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -323,7 +349,7 @@ fun EditKneeRecordForm(
                         rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
                     AlertDialog(
                         onDismissRequest = {
-                            showDateDialog = false
+                            changeDateDialogState
                         },
                         text = {
                             DatePicker(
@@ -334,11 +360,9 @@ fun EditKneeRecordForm(
                         confirmButton = {
                             Button(
                                 onClick = {
-                                    showDateDialog = false
-                                    selectedDate = Instant.ofEpochMilli(
-                                        datePickerState.selectedDateMillis
-                                            ?: System.currentTimeMillis()
-                                    ).atZone(ZoneId.systemDefault()).toLocalDate()
+                                    datePickerState.selectedDateMillis?.let {
+                                        setDate(it)
+                                    }
                                 }
                             ) {
                                 Text("OK")
@@ -346,10 +370,7 @@ fun EditKneeRecordForm(
                         },
                         dismissButton = {
                             Button(
-                                onClick = {
-                                    showDateDialog = false
-
-                                }
+                                onClick = changeDateDialogState
                             ) {
                                 Text("キャンセル")
                             }
