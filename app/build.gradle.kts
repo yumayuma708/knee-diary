@@ -72,6 +72,7 @@ dependencies {
     implementation ("com.google.ai.client.generativeai:generativeai:0.2.2")
 
     implementation(libs.hilt.android)
+    implementation(libs.androidx.media3.common)
     ksp(libs.hilt.compiler)
     ksp(libs.hilt.android.compiler)
     implementation(libs.activity.compose)

@@ -20,7 +20,6 @@ import androidx.compose.material.icons.rounded.Event
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DisplayMode
@@ -28,7 +27,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
@@ -41,6 +39,7 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,9 +48,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import androidx.media3.common.util.Log
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -83,10 +82,31 @@ private fun EditKneeRecordScreen(
 ) {
     var isRight by remember { mutableStateOf(false) }
     var pain by remember { mutableStateOf(0f) }
-    var painLevel = ((pain * 4).roundToInt() + 1)
+
+    val customOrange = Color(1f, 165f / 255f, 0f)
+    val sliderColor = when {
+        pain < 0.25f -> Color.Blue
+        pain < 0.5f -> Color.Green
+        pain < 0.75f -> Color.Yellow
+        pain < 1f -> customOrange
+        else -> Color.Red
+    }
+    val setPain: (Float) -> Unit = { newValue ->
+        pain = newValue
+        println("Updated pain: $pain")
+    }
     var selectedIconId by remember { mutableStateOf<Int?>(null) }
+    val weather = when (selectedIconId) {
+        0 -> "sunny"
+        1 -> "cloudy"
+        2 -> "rainy"
+        3 -> "snowy"
+        else -> ""
+    }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    val date: Long = selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
     var selectedTime by remember { mutableStateOf(LocalTime.now()) }
+    val time: Long = selectedTime.toNanoOfDay() / 1_000_000
     var note by remember { mutableStateOf("") }
 
     Scaffold { innerPadding ->
@@ -94,30 +114,40 @@ private fun EditKneeRecordScreen(
             EditKneeRecordViewModel.UiState.Initial,
             EditKneeRecordViewModel.UiState.Loading,
             is EditKneeRecordViewModel.UiState.LoadSuccess -> {
-                Box (
+                Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize(),
-                ){
+                ) {
                     CircularProgressIndicator()
                 }
             }
+
             is EditKneeRecordViewModel.UiState.LoadError -> {
-                Box (
+                Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize(),
-                ){
+                ) {
                     Text(uiState.error.toString())
                 }
             }
+
             EditKneeRecordViewModel.UiState.Idle -> {
                 EditKneeRecordForm(
                     modifier = Modifier.padding(innerPadding),
+                    isRight = isRight,
+                    setIsRight = { isRight = !isRight },
                     note = note,
-                    setNote = { note = it}
+                    setNote = { note = it },
+                    date = date,
+                    weather = weather,
+                    setWeather = { selectedIconId = it },
+                    pain = pain,
+                    setPain = setPain,
+                    sliderColor = sliderColor
                 )
             }
 
@@ -134,9 +164,10 @@ private fun EditKneeRecordScreen(
             is EditKneeRecordViewModel.UiState.LoadError -> {
 
             }
+
             is EditKneeRecordViewModel.UiState.LoadSuccess -> {
                 isRight = uiState.kneeRecord.isRight
-                painLevel = uiState.kneeRecord.painLevel
+                pain = uiState.kneeRecord.pain
                 selectedIconId = when (uiState.kneeRecord.weather) {
                     "sunny" -> 0
                     "cloudy" -> 1
@@ -144,14 +175,18 @@ private fun EditKneeRecordScreen(
                     "snowy" -> 3
                     else -> null
                 }
-                selectedDate = Instant.ofEpochMilli(uiState.kneeRecord.date).atZone(ZoneId.systemDefault()).toLocalDate()
+                selectedDate =
+                    Instant.ofEpochMilli(uiState.kneeRecord.date).atZone(ZoneId.systemDefault())
+                        .toLocalDate()
                 selectedTime = LocalTime.ofNanoOfDay(uiState.kneeRecord.time * 1_000_000)
                 note = uiState.kneeRecord.note
                 moveToIdle()
             }
+
             EditKneeRecordViewModel.UiState.Loading -> {
 
             }
+
             EditKneeRecordViewModel.UiState.Idle -> {
 
             }
@@ -163,28 +198,31 @@ private fun EditKneeRecordScreen(
 @Composable
 fun EditKneeRecordForm(
     modifier: Modifier = Modifier,
+    date: Long,
     note: String,
     setNote: (String) -> Unit,
+    isRight: Boolean,
+    setIsRight: () -> Unit,
+    weather: String,
+    setWeather: (Int) -> Unit,
+    pain: Float,
+    setPain: (Float) -> Unit,
+    sliderColor: Color,
 ) {
-    var pain by remember { mutableStateOf(0f) }
-    val customOrange = Color(1f, 165f / 255f, 0f)
-    val sliderColor = when {
-        pain < 0.25f -> Color.Blue
-        pain < 0.5f -> Color.Green
-        pain < 0.75f -> Color.Yellow
-        pain < 1f -> customOrange
-        else -> Color.Red
-    }
     var selectedIconId by remember { mutableStateOf<Int?>(null) }
+
     val icons =
         listOf(Icons.Filled.WbSunny, Icons.Filled.Cloud, Icons.Filled.Umbrella, Icons.Filled.AcUnit)
     val iconIds = listOf(0, 1, 2, 3)
     var showDateDialog by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
     var showTimeDialog by remember { mutableStateOf(false) }
+    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
     val timeFormatter = DateTimeFormatter.ofPattern("HH時mm分")
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
+
 
     Box(
         contentAlignment = Alignment.Center,
@@ -199,10 +237,10 @@ fun EditKneeRecordForm(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                RadioButton(selected = !isRight, onClick = { isRight = false })
+                RadioButton(selected = !isRight, onClick = setIsRight)
                 Text("左足")
                 Box(modifier = Modifier.size(width = 20.dp, height = 20.dp))
-                RadioButton(selected = isRight, onClick = { isRight = true })
+                RadioButton(selected = isRight, onClick = setIsRight)
                 Text("右足")
             }
             Row(
@@ -211,10 +249,9 @@ fun EditKneeRecordForm(
             ) { Text("足の痛み") }
             Slider(
                 value = pain,
-                onValueChange = { newValue ->
-                    pain = newValue.coerceIn(0f, 4f)
-                },
+                onValueChange = setPain,
                 steps = 3,
+                valueRange = 0f..1f,
                 colors = SliderDefaults.colors(
                     activeTrackColor = sliderColor,
                     thumbColor = sliderColor,

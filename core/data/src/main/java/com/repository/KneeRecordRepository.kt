@@ -9,7 +9,7 @@ interface KneeRecordRepository {
         date: Long,
         time: Long,
         isRight: Boolean,
-        painLevel: Int,
+        pain: Float,
         weather: String,
         note: String
     ): KneeRecord

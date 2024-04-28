@@ -37,7 +37,7 @@ class RecordScreenViewModel @Inject constructor(
         date: Long,
         time: Long,
         isRight: Boolean,
-        painLevel: Int,
+        pain: Float,
         weather: String,
         note: String,
     ) {
@@ -50,7 +50,7 @@ class RecordScreenViewModel @Inject constructor(
         //create function が suspend fun で非同期関数なので、viewModelScope.launch{}で呼び出す
         viewModelScope.launch {
             try {
-                kneeRecordRepository.create(date, time, isRight, painLevel, weather, note)
+                kneeRecordRepository.create(date, time, isRight, pain, weather, note)
                 _uiState.value = UiState.Success
             } catch (e: Exception) {
                 _uiState.value = UiState.CreateError(e)

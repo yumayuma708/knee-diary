@@ -93,12 +93,12 @@ fun KneeRecordListItem(
         "snowy" -> Icons.Rounded.AcUnit
         else -> Icons.Rounded.Help
     }
-    val painIcon = when (kneeRecord.painLevel) {
-        1 -> Icons.Rounded.SentimentSatisfied
-        2 -> Icons.Rounded.SentimentNeutral
-        3 -> Icons.Rounded.SentimentDissatisfied
-        4 -> Icons.Rounded.MoodBad
-        5 -> Icons.Rounded.SentimentVeryDissatisfied
+    val painIcon = when (kneeRecord.pain) {
+        0.0f -> Icons.Rounded.SentimentSatisfied
+        0.25f -> Icons.Rounded.SentimentNeutral
+        0.5f -> Icons.Rounded.SentimentDissatisfied
+        0.75f -> Icons.Rounded.MoodBad
+        1.0f -> Icons.Rounded.SentimentVeryDissatisfied
         else -> Icons.Rounded.Face
     }
     val isRight = when (kneeRecord.isRight) {
