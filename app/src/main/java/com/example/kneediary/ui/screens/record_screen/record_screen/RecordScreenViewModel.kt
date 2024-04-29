@@ -16,7 +16,7 @@ class RecordScreenViewModel @Inject constructor(
     private val kneeRecordRepository: KneeRecordRepository
 ): ViewModel() {
     //sealedがついているため、このインターフェイスの使用がこのモジュール内に制限される。
-    //また、このインターフェイスないの全ての可能性をコンパイラが考慮する。
+    //また、このインターフェイス内の全ての可能性をコンパイラが考慮する。
     //例. when式で全ての可能性を網羅していない場合、コンパイルエラーが発生する。
     sealed interface UiState {
         //Idleは入力を受け付けている状態
@@ -37,7 +37,7 @@ class RecordScreenViewModel @Inject constructor(
         date: Long,
         time: Long,
         isRight: Boolean,
-        painLevel: Int,
+        pain: Float,
         weather: String,
         note: String,
     ) {
@@ -50,7 +50,7 @@ class RecordScreenViewModel @Inject constructor(
         //create function が suspend fun で非同期関数なので、viewModelScope.launch{}で呼び出す
         viewModelScope.launch {
             try {
-                kneeRecordRepository.create(date, time, isRight, painLevel, weather, note)
+                kneeRecordRepository.create(date, time, isRight, pain, weather, note)
                 _uiState.value = UiState.Success
             } catch (e: Exception) {
                 _uiState.value = UiState.CreateError(e)

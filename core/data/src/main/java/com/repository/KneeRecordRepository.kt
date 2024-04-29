@@ -9,10 +9,12 @@ interface KneeRecordRepository {
         date: Long,
         time: Long,
         isRight: Boolean,
-        painLevel: Int,
+        pain: Float,
         weather: String,
         note: String
     ): KneeRecord
+
+    suspend fun getById(id: Long): KneeRecord?
 
     fun getAll(): Flow<List<KneeRecord>>
 }

@@ -82,8 +82,8 @@ fun RecordScreen(
         //自分で作ったViewModelのuiStateを一番上に移動させる。
         //こうすることで、UiStateが変化したタイミングで再婚ポーズが行われる。
         uiState = uiState,
-        create = { date, time, isRight, painLevel, weather, note ->
-            viewModel.create(date, time, isRight, painLevel, weather, note)
+        create = { date, time, isRight, pain, weather, note ->
+            viewModel.create(date, time, isRight, pain, weather, note)
         },
         moveToIdle = {
             viewModel.moveToIdle()
@@ -97,7 +97,7 @@ fun RecordScreen(
 //private funで、引数が異なるRecordScreen()を作成
 private fun RecordScreen(
     uiState: RecordScreenViewModel.UiState,
-    create: (Long, Long, Boolean, Int, String, String) -> Unit,
+    create: (Long, Long, Boolean, Float, String, String) -> Unit,
     moveToIdle: () -> Unit,
     back: () -> Unit,
 ) {
@@ -113,9 +113,7 @@ private fun RecordScreen(
         pain < 1f -> customOrange
         else -> Color.Red
     }
-    //painLevelをInt型で定義
-    val painLevel = ((pain * 4).roundToInt() + 1)
-
+    val iconIds = listOf(0, 1, 2, 3)
     var selectedIconId by remember { mutableStateOf<Int?>(null) }
     //weatherを定義
     val weather = when (selectedIconId) {
@@ -127,7 +125,6 @@ private fun RecordScreen(
     }
     val icons =
         listOf(Icons.Filled.WbSunny, Icons.Filled.Cloud, Icons.Filled.Umbrella, Icons.Filled.AcUnit)
-    val iconIds = listOf(0, 1, 2, 3)
 
 //    val datePickerState = rememberDatePickerState()
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
@@ -389,7 +386,7 @@ private fun RecordScreen(
                     Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
                     OutlinedButton(
                         onClick = {
-                            create(date, time, isRight, painLevel, weather, note)
+                            create(date, time, isRight, pain, weather, note)
                         },
                         colors = ButtonDefaults.outlinedButtonColors(
                             containerColor = MaterialTheme.colorScheme.primary,

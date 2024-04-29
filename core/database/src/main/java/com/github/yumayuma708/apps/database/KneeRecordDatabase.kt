@@ -9,7 +9,7 @@ import com.github.yumayuma708.apps.database.model.KneeRecordEntity
     entities = [
         KneeRecordEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 abstract class KneeRecordDatabase : RoomDatabase() {

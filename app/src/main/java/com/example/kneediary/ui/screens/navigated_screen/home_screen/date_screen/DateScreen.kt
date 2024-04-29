@@ -14,16 +14,21 @@ import com.github.yumayuma708.apps.model.KneeRecord
 fun DateScreen(
     modifier: Modifier = Modifier,
     viewModel: DateScreenViewModel,
+    toEdit: (Long) -> Unit,
 ) {
     val items = viewModel.items.collectAsState(initial = emptyList())
     DateScreen(
-        modifier = modifier, kneeRecordList = items.value
+        modifier = modifier,
+        kneeRecordList = items.value,
+        toEdit = toEdit,
     )
 }
 
 @Composable
 private fun DateScreen(
-    modifier: Modifier = Modifier, kneeRecordList: List<KneeRecord>
+    modifier: Modifier = Modifier,
+    kneeRecordList: List<KneeRecord>,
+    toEdit: (Long) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -32,16 +37,20 @@ private fun DateScreen(
             key = { index -> kneeRecordList[index].id }, //一意のkeyを指定する
             itemContent = {
                 KneeRecordListItem(
-                    kneeRecord = kneeRecordList[it]
+                    kneeRecord = kneeRecordList[it],
+                    onClick = {
+                        toEdit(kneeRecordList[it].id)
+                    },
                 )
             })
     }
 }
 
-    @Preview
-    @Composable
-    fun PreviewDateScreen() {
-        DateScreen(
-            kneeRecordList = emptyList(),
-        )
-    }
+@Preview
+@Composable
+fun PreviewDateScreen() {
+    DateScreen(
+        kneeRecordList = emptyList(),
+        toEdit = { _ -> },
+    )
+}

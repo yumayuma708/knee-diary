@@ -4,12 +4,16 @@ import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.HomeScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen.DateScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen.DateScreenViewModel
+import com.example.kneediary.ui.screens.navigated_screen.home_screen.edit_screen.EditKneeRecordScreen
+import com.example.kneediary.ui.screens.navigated_screen.home_screen.edit_screen.EditKneeRecordViewModel
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.note_screen.NoteScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.weekly_screen.WeeklyScreen
 import com.example.kneediary.ui.screens.record_screen.RecordNoteScreen
@@ -38,6 +42,9 @@ fun KneeDiaryNavHost(
             val viewModel: DateScreenViewModel = hiltViewModel()
             DateScreen(
                 viewModel = viewModel,
+                toEdit = {kneeRecordId ->
+                    navController.navigate("/edit/$kneeRecordId")
+                }
             )
         }
         composable(route = Nav.NoteScreen.name) {
@@ -58,6 +65,18 @@ fun KneeDiaryNavHost(
         composable(route = Nav.RecordNoteScreen.name){
             RecordNoteScreen(
                 navController = navController
+            )
+        }
+        composable("/edit/{kneeRecordId}",
+            arguments = listOf(
+                navArgument("kneeRecordId"){
+                    type = NavType.LongType
+                }
+            )
+            ){
+            val viewModel: EditKneeRecordViewModel = hiltViewModel()
+            EditKneeRecordScreen(
+                viewModel = viewModel
             )
         }
     }

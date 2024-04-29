@@ -26,7 +26,8 @@ object DatabaseModule {
             context,
             KneeRecordDatabase::class.java, //どういうデータベースを作るか
             "knee_record.db", //データベースの名前
-        ).build()
+        ).fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides

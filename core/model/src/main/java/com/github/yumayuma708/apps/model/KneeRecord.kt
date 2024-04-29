@@ -6,7 +6,7 @@ data class KneeRecord(
     val date: Long,
     val time: Long,
     val isRight: Boolean,
-    val painLevel: Int,
+    val pain: Float,
     val weather: String,
     val note: String,
     val createdAt: Long,

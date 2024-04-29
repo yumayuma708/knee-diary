@@ -94,6 +94,9 @@ fun HomeScreen(
                         DateScreen(
                         modifier = Modifier.padding(paddingValues),
                         viewModel = viewModel,
+                            toEdit = {kneeRecordId ->
+                                navController.navigate("/edit/$kneeRecordId")
+                            }
                         )
                     }
                     1 -> WeeklyScreen(modifier = Modifier.padding(paddingValues))

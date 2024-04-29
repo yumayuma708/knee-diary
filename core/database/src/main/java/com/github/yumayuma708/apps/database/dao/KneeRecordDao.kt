@@ -17,6 +17,10 @@ interface KneeRecordDao {
     @Insert
     suspend fun create(kneeRecord:KneeRecordEntity): Long
 
+    @Query("SELECT * FROM knee_record WHERE id = :id LIMIT 1")
+    suspend fun getById(id: Long): KneeRecordEntity?
+
+
     @Query("SELECT * FROM knee_record order by updatedAt desc")  //一番最新のものが一番最初にくるような順番でデータを取得する。このSQLを書くことでRoomが勝手にデータを取得してこの順番で表示してくれる。データに追加や更新があった場合も、自動で更新してくれる。
     fun getAll(): Flow<List<KneeRecordEntity>>  //戻り値の型は、:core:databaseモジュールでKneeRecordEntityを扱うようにしているため、Flow<List<KneeRecordEntity>>になっている。
 }

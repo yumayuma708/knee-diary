@@ -5,7 +5,6 @@ import com.github.yumayuma708.apps.database.model.KneeRecordEntity
 import com.github.yumayuma708.apps.model.KneeRecord
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.util.Date
 import javax.inject.Inject
 
 //@Injectアノテーションをつけて、LocalKneeRecordRepositoryクラスをDI可能にしている。
@@ -13,8 +12,15 @@ import javax.inject.Inject
 class LocalKneeRecordRepository @Inject constructor(
     //privateで、このクラス内でしか使えないパラメータkneeRecordDaoを定義している。
     private val kneeRecordDao: KneeRecordDao,
-): KneeRecordRepository {
-    override suspend fun create(date: Long, time: Long, isRight: Boolean, painLevel: Int, weather: String, note: String): KneeRecord {
+) : KneeRecordRepository {
+    override suspend fun create(
+        date: Long,
+        time: Long,
+        isRight: Boolean,
+        pain: Float,
+        weather: String,
+        note: String
+    ): KneeRecord {
         //currentTimeMillis()メソッドは、1970年1月1日00:00:00 GMTからの経過時間をミリ秒単位で返している。値はLong型
         val currentTime = System.currentTimeMillis()
         //kneeRecordEntityのインスタンスを作成
@@ -24,7 +30,7 @@ class LocalKneeRecordRepository @Inject constructor(
             date = date,
             time = time,
             isRight = isRight,
-            painLevel = painLevel,
+            pain = pain,
             weather = weather,
             note = note,
             createdAt = currentTime,
@@ -32,18 +38,17 @@ class LocalKneeRecordRepository @Inject constructor(
         )
         val id = kneeRecordDao.create(kneeRecord)
         return KneeRecord(
-            id =id,
+            id = id,
             date = date,
             time = time,
             isRight = isRight,
-            painLevel = painLevel,
+            pain = pain,
             weather = weather,
             note = note,
             createdAt = kneeRecord.createdAt,
             updatedAt = kneeRecord.updatedAt,
         )
     }
-
     //LocalKneeRecordRepositoryは、データベースからKneeRecordを取ってくるのが仕事
     //KneeRecordDaoを使って、Flow<List<KneeRecord>>を返すようにする
     //RoomのDaoは、Flowで結果を返す仕組みがあるので、その仕組みを使っている。
@@ -51,19 +56,26 @@ class LocalKneeRecordRepository @Inject constructor(
         //KneeRecordDaoに、getAll()というメソッドを追加する
         return kneeRecordDao.getAll().map { items ->
             //map関数で、List<KneeRecordEntity>をList<KneeRecord>に変換する
-            items.map { item ->
-                KneeRecord(
-                    id = item.id,
-                    date = item.date,
-                    time = item.time,
-                    isRight = item.isRight,
-                    painLevel = item.painLevel,
-                    weather = item.weather,
-                    note = item.note,
-                    createdAt = item.createdAt,
-                    updatedAt = item.updatedAt,
-                )
-            }
+            items.map { item -> item.toModel() }
+
         }
     }
+    override suspend fun getById(id: Long): KneeRecord? {
+        return kneeRecordDao.getById(id)?.toModel()
+    }
+}
+
+
+private fun KneeRecordEntity.toModel(): KneeRecord {
+    return KneeRecord(
+        id = id,
+        date = date,
+        time = time,
+        isRight = isRight,
+        pain = pain,
+        weather = weather,
+        note = note,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+    )
 }
