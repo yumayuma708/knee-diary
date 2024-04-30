@@ -230,26 +230,30 @@ private fun EditKneeRecordScreen(
             -> {
                 EditKneeRecordForm(
                     modifier = Modifier.padding(innerPadding),
+
                     isRight = isRight,
                     setIsRight = { isRight = !isRight },
-                    note = note,
-                    setNote = { note = it },
-                    date = date,
-                    iconIds = iconIds,
-                    selectedIconId = selectedIconId,
-                    weather = weather,
-                    setWeather = setWeather,
+
                     pain = pain,
                     setPain = setPain,
                     sliderColor = sliderColor,
-                    setDate = setDate,
+
+                    iconIds = iconIds,
+                    selectedIconId = selectedIconId,
+                    setWeather = setWeather,
+
+                    selectedDate = selectedDate,
                     showDateDialog = showDateDialog,
                     changeDateDialogState = changeDateDialogState,
-                    selectedDate = selectedDate,
+                    setDate = setDate,
+
                     selectedTime = selectedTime,
                     showTimeDialog = showTimeDialog,
                     changeTimeDialogState = changeTimeDialogState,
                     setTime = setTime,
+
+                    note = note,
+                    setNote = { note = it },
                 )
             }
 
@@ -322,26 +326,30 @@ private fun EditKneeRecordScreen(
 @Composable
 fun EditKneeRecordForm(
     modifier: Modifier = Modifier,
-    date: Long,
-    note: String,
-    setNote: (String) -> Unit,
+
     isRight: Boolean,
     setIsRight: () -> Unit,
-    iconIds: List<Int>,
-    selectedIconId: Int?,
-    weather: String,
-    setWeather: (Int) -> Unit,
+
     pain: Float,
     setPain: (Float) -> Unit,
     sliderColor: Color,
-    setDate: (Long) -> Unit,
+
+    iconIds: List<Int>,
+    selectedIconId: Int?,
+    setWeather: (Int) -> Unit,
+
+    selectedDate: LocalDate,
     showDateDialog: Boolean,
     changeDateDialogState: () -> Unit,
-    selectedDate: LocalDate,
+    setDate: (Long) -> Unit,
+
     selectedTime: LocalTime,
     showTimeDialog: Boolean,
     changeTimeDialogState: () -> Unit,
     setTime: (LocalTime) -> Unit,
+
+    note: String,
+    setNote: (String) -> Unit,
 ) {
 
     val icons =
