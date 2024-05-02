@@ -124,27 +124,29 @@ private fun EditKneeRecordScreen(
         else -> ""
     }
     var showDateDialog by remember { mutableStateOf(false) }
-    var date by remember { mutableStateOf<Long>(System.currentTimeMillis()) }
+    //dateは、kneeRecordから受け取ったLong型の変数
+    var date by remember { mutableStateOf(System.currentTimeMillis()) }
+    //selectedDateは、DatePickerから受け取ったLocalDate!型の変数
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    LaunchedEffect(date) {
-        selectedDate = if (date == 0L) {
-            println("dateが0なので、現在の日付を使用します")
-            LocalDate.now()
-        } else {
-            Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDate()
+    var datePicked by remember { mutableStateOf(false) }
+    LaunchedEffect(uiState) {
+        if (uiState is EditKneeRecordViewModel.UiState.LoadSuccess && !datePicked) {
+            date = uiState.kneeRecord.date
+            selectedDate = Instant.ofEpochMilli(date).atZone(ZoneId.of("UTC")).toLocalDate()
         }
     }
     val setDate: (Long) -> Unit = { newDate ->
         date = newDate
-        selectedDate = Instant.ofEpochMilli(newDate).atZone(ZoneId.systemDefault()).toLocalDate()
+        selectedDate = Instant.ofEpochMilli(newDate).atZone(ZoneId.of("UTC")).toLocalDate()
         showDateDialog = false
     }
     val changeDateDialogState: () -> Unit = {
         showDateDialog = !showDateDialog
     }
 
-    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
+    var showTimeDialog by remember { mutableStateOf(false) }
     var time by remember { mutableStateOf<Long>(System.currentTimeMillis()) }
+    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
     LaunchedEffect(time) {
         selectedTime = if (time == 0L) {
             println("timeが0なので、現在の時刻を使用します")
@@ -153,13 +155,12 @@ private fun EditKneeRecordScreen(
             Instant.ofEpochMilli(time).atZone(ZoneId.of("UTC")).toLocalTime()
         }
     }
-    var showTimeDialog by remember { mutableStateOf(false) }
-    val changeTimeDialogState: () -> Unit = {
-        showTimeDialog = !showTimeDialog
-    }
     val setTime: (LocalTime) -> Unit = { newTime ->
         selectedTime = newTime
         showTimeDialog = false
+    }
+    val changeTimeDialogState: () -> Unit = {
+        showTimeDialog = !showTimeDialog
     }
 
     var note by remember { mutableStateOf("") }
@@ -198,7 +199,7 @@ private fun EditKneeRecordScreen(
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        ) { innerPadding ->
+    ) { innerPadding ->
         when (uiState) {
             EditKneeRecordViewModel.UiState.Initial, EditKneeRecordViewModel.UiState.Loading, is EditKneeRecordViewModel.UiState.LoadSuccess -> {
                 Box(
@@ -242,6 +243,8 @@ private fun EditKneeRecordScreen(
                     selectedIconId = selectedIconId,
                     setWeather = setWeather,
 
+                    date = date,
+                    datePicked = datePicked,
                     selectedDate = selectedDate,
                     showDateDialog = showDateDialog,
                     changeDateDialogState = changeDateDialogState,
@@ -338,6 +341,8 @@ fun EditKneeRecordForm(
     selectedIconId: Int?,
     setWeather: (Int) -> Unit,
 
+    date: Long,
+    datePicked: Boolean,
     selectedDate: LocalDate,
     showDateDialog: Boolean,
     changeDateDialogState: () -> Unit,
@@ -429,11 +434,19 @@ fun EditKneeRecordForm(
                     modifier = commonSize
                 )
                 Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
+
+                ////////////////////////////////////////////////////////
                 Text(
-                    selectedDate.format(dateFormatter),
+                    text = if (datePicked) {
+                        selectedDate.format(dateFormatter)
+                    } else {
+                        Instant.ofEpochMilli(date).atZone(ZoneId.of("UTC")).toLocalDate().format(dateFormatter)
+                    },
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1
                 )
+                ////////////////////////////////////////////////////////
+
                 Icon(
                     imageVector = Icons.Rounded.ArrowDropDown,
                     contentDescription = "表示",

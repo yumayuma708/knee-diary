@@ -130,7 +130,7 @@ private fun RecordScreen(
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     //dateをLong型で定義。このミリ秒は、選択された日付の午前0時からのミリ秒のこと。
     //これと、timeのミリ秒を足し合わせることで、日時を表す。
-    val date: Long = selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    val date: Long = selectedDate.atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli()
     var showDateDialog by remember { mutableStateOf(false) }
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
 
@@ -169,7 +169,7 @@ private fun RecordScreen(
                     IconButton(onClick = back) {
                         Icon(Icons.Rounded.Close, contentDescription = "閉じる")
                     }
-                }
+                },
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -280,7 +280,7 @@ private fun RecordScreen(
                                             selectedDate = Instant.ofEpochMilli(
                                                 datePickerState.selectedDateMillis
                                                     ?: System.currentTimeMillis()
-                                            ).atZone(ZoneId.systemDefault()).toLocalDate()
+                                            ).atZone(ZoneId.of("UTC")).toLocalDate()
                                         }
                                     ) {
                                         Text("OK")
