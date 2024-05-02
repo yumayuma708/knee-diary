@@ -146,14 +146,16 @@ private fun EditKneeRecordScreen(
     }
 
     var showTimeDialog by remember { mutableStateOf(false) }
-    var time by remember { mutableStateOf<Long>(System.currentTimeMillis()) }
+    var time by remember { mutableStateOf(System.currentTimeMillis()) }
     var selectedTime by remember { mutableStateOf(LocalTime.now()) }
-    LaunchedEffect(time) {
-        selectedTime = if (time == 0L) {
-            println("timeが0なので、現在の時刻を使用します")
-            LocalTime.now()
+    var timePicked by remember { mutableStateOf(false) }
+    Log.d("時刻1",selectedTime.toString())
+    LaunchedEffect(uiState) {
+        if (uiState is EditKneeRecordViewModel.UiState.LoadSuccess && !timePicked) {
+            time = uiState.kneeRecord.time
         } else {
             Instant.ofEpochMilli(time).atZone(ZoneId.of("Asia/Tokyo")).toLocalTime()
+            Log.d("時刻3",selectedTime.toString())
         }
     }
     val setTime: (LocalTime) -> Unit = { newTime ->
@@ -251,6 +253,8 @@ private fun EditKneeRecordScreen(
                     changeDateDialogState = changeDateDialogState,
                     setDate = setDate,
 
+                    time = time,
+                    timePicked = timePicked,
                     selectedTime = selectedTime,
                     showTimeDialog = showTimeDialog,
                     changeTimeDialogState = changeTimeDialogState,
@@ -349,6 +353,8 @@ fun EditKneeRecordForm(
     changeDateDialogState: () -> Unit,
     setDate: (Long) -> Unit,
 
+    time: Long,
+    timePicked: Boolean,
     selectedTime: LocalTime,
     showTimeDialog: Boolean,
     changeTimeDialogState: () -> Unit,
@@ -447,7 +453,6 @@ fun EditKneeRecordForm(
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1
                 )
-                Log.d("記録された時刻","${Instant.ofEpochMilli(date).atZone(ZoneId.of("Asia/Tokyo")).toLocalDate()}")
                 ////////////////////////////////////////////////////////
 
                 Icon(
@@ -503,11 +508,22 @@ fun EditKneeRecordForm(
                     modifier = commonSize
                 )
                 Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
+
+                //////////////////////////////////////////////////////////////
                 Text(
-                    selectedTime.format(timeFormatter),
+//                    text = if (timePicked) {
+//                        selectedTime.format(timeFormatter)
+//                    } else {
+//                        Instant.ofEpochMilli(time).atZone(ZoneId.of("Asia/Tokyo")).toLocalTime().format(timeFormatter)
+//                    },
+                    text = Instant.ofEpochMilli(time).atZone(ZoneId.of("UTC")).toLocalTime().format(timeFormatter),
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1
                 )
+                Log.d("time",time.toString())
+                Log.d("時刻4",selectedTime.toString())
+                //////////////////////////////////////////////////////////////
+
                 Icon(
                     imageVector = Icons.Rounded.ArrowDropDown,
                     contentDescription = "表示",
