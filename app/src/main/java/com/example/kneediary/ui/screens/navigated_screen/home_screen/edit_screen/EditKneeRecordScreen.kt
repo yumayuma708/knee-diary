@@ -153,6 +153,7 @@ private fun EditKneeRecordScreen(
     LaunchedEffect(uiState) {
         if (uiState is EditKneeRecordViewModel.UiState.LoadSuccess && !timePicked) {
             time = uiState.kneeRecord.time
+            selectedTime = Instant.ofEpochMilli(time).atZone(ZoneId.of("Asia/Tokyo")).toLocalTime()
         } else {
             Instant.ofEpochMilli(time).atZone(ZoneId.of("Asia/Tokyo")).toLocalTime()
             Log.d("時刻3",selectedTime.toString())
@@ -161,6 +162,8 @@ private fun EditKneeRecordScreen(
     val setTime: (LocalTime) -> Unit = { newTime ->
         selectedTime = newTime
         showTimeDialog = false
+        timePicked = true
+        time = selectedTime.atDate(LocalDate.now()).atZone(ZoneId.of("UTC")).toInstant().toEpochMilli()
     }
     val changeTimeDialogState: () -> Unit = {
         showTimeDialog = !showTimeDialog
@@ -511,15 +514,15 @@ fun EditKneeRecordForm(
 
                 //////////////////////////////////////////////////////////////
                 Text(
-//                    text = if (timePicked) {
-//                        selectedTime.format(timeFormatter)
-//                    } else {
-//                        Instant.ofEpochMilli(time).atZone(ZoneId.of("Asia/Tokyo")).toLocalTime().format(timeFormatter)
-//                    },
-                    text = Instant.ofEpochMilli(time).atZone(ZoneId.of("UTC")).toLocalTime().format(timeFormatter),
+                    text = if (timePicked) {
+                        selectedTime.format(timeFormatter)
+                    } else {
+                        Instant.ofEpochMilli(time).atZone(ZoneId.of("UTC")).toLocalTime().format(timeFormatter)
+                    },
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1
                 )
+                Log.d("if",timePicked.toString())
                 Log.d("time",time.toString())
                 Log.d("時刻4",selectedTime.toString())
                 //////////////////////////////////////////////////////////////
