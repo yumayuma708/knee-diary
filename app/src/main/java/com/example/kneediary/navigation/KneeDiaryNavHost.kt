@@ -76,7 +76,10 @@ fun KneeDiaryNavHost(
             ){
             val viewModel: EditKneeRecordViewModel = hiltViewModel()
             EditKneeRecordScreen(
-                viewModel = viewModel
+                viewModel = viewModel,
+                back = {
+                    navController.popBackStack()
+                }
             )
         }
     }

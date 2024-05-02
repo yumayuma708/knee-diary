@@ -2,6 +2,7 @@
 
 package com.example.kneediary.ui.screens.navigated_screen.home_screen.edit_screen
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,8 +14,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Umbrella
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material.icons.rounded.ArrowDropDown
@@ -34,8 +37,11 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -49,8 +55,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import com.example.kneediary.R
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -60,7 +69,8 @@ import kotlin.math.roundToInt
 
 @Composable
 fun EditKneeRecordScreen(
-    viewModel: EditKneeRecordViewModel
+    viewModel: EditKneeRecordViewModel,
+    back: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     EditKneeRecordScreen(
@@ -70,15 +80,22 @@ fun EditKneeRecordScreen(
         },
         moveToIdle = {
             viewModel.moveToIdle()
+        },
+        back = back,
+        update = { isRight, pain, weather, note, date, time ->
+            viewModel.update(isRight, pain, weather, note, date, time)
         }
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EditKneeRecordScreen(
     uiState: EditKneeRecordViewModel.UiState,
     load: () -> Unit,
-    moveToIdle: () -> Unit
+    moveToIdle: () -> Unit,
+    back: () -> Unit,
+    update: (Boolean, Float, String, String, Long, Long) -> Unit,
 ) {
     var isRight by remember { mutableStateOf(false) }
     var pain by remember { mutableStateOf(0f) }
@@ -108,53 +125,87 @@ private fun EditKneeRecordScreen(
         else -> ""
     }
     var showDateDialog by remember { mutableStateOf(false) }
-    var date by remember { mutableStateOf<Long>(System.currentTimeMillis()) }
+    //dateは、kneeRecordから受け取ったLong型の変数
+    var date by remember { mutableStateOf(System.currentTimeMillis()) }
+    //selectedDateは、DatePickerから受け取ったLocalDate!型の変数
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    LaunchedEffect(date) {
-        selectedDate = if (date == 0L) {
-            println("dateが0なので、現在の日付を使用します")
-            LocalDate.now()
-        } else {
-            Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDate()
+    var datePicked by remember { mutableStateOf(false) }
+    LaunchedEffect(uiState) {
+        if (uiState is EditKneeRecordViewModel.UiState.LoadSuccess && !datePicked) {
+            date = uiState.kneeRecord.date
+            selectedDate = Instant.ofEpochMilli(date).atZone(ZoneId.of("Asia/Tokyo")).toLocalDate()
         }
     }
     val setDate: (Long) -> Unit = { newDate ->
         date = newDate
-        selectedDate = Instant.ofEpochMilli(newDate).atZone(ZoneId.systemDefault()).toLocalDate()
+        selectedDate = Instant.ofEpochMilli(newDate).atZone(ZoneId.of("Asia/Tokyo")).toLocalDate()
         showDateDialog = false
     }
     val changeDateDialogState: () -> Unit = {
         showDateDialog = !showDateDialog
     }
 
-    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
-    var time by remember { mutableStateOf<Long>(System.currentTimeMillis()) }
-    LaunchedEffect(time) {
-        selectedTime = if (time == 0L) {
-            println("timeが0なので、現在の時刻を使用します")
-            LocalTime.now()
-        } else {
-            Instant.ofEpochMilli(time).atZone(ZoneId.of("UTC")).toLocalTime()
-        }
-    }
     var showTimeDialog by remember { mutableStateOf(false) }
-    val changeTimeDialogState: () -> Unit = {
-        showTimeDialog = !showTimeDialog
+    var time by remember { mutableStateOf(System.currentTimeMillis()) }
+    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
+    var timePicked by remember { mutableStateOf(false) }
+    LaunchedEffect(uiState) {
+        if (uiState is EditKneeRecordViewModel.UiState.LoadSuccess && !timePicked) {
+            time = uiState.kneeRecord.time
+            selectedTime = Instant.ofEpochMilli(time).atZone(ZoneId.of("Asia/Tokyo")).toLocalTime()
+        } else {
+            Instant.ofEpochMilli(time).atZone(ZoneId.of("Asia/Tokyo")).toLocalTime()
+        }
     }
     val setTime: (LocalTime) -> Unit = { newTime ->
         selectedTime = newTime
         showTimeDialog = false
+        timePicked = true
+        time = selectedTime.atDate(LocalDate.now()).atZone(ZoneId.of("UTC")).toInstant().toEpochMilli()
     }
-
-
+    val changeTimeDialogState: () -> Unit = {
+        showTimeDialog = !showTimeDialog
+    }
 
     var note by remember { mutableStateOf("") }
 
-    Scaffold { innerPadding ->
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(stringResource(R.string.edit_knee_record))
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = back
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                            contentDescription = "戻る"
+                        )
+                    }
+                },
+                actions = {
+                    if (uiState is EditKneeRecordViewModel.UiState.Idle) {
+                        IconButton(
+                            onClick = {
+                                update(isRight, pain, weather, note, date, time)
+                            }
+                        ) {
+                            Icon(imageVector = Icons.Filled.Done, contentDescription = "保存")
+                        }
+                    }
+
+                }
+            )
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+    ) { innerPadding ->
         when (uiState) {
-            EditKneeRecordViewModel.UiState.Initial,
-            EditKneeRecordViewModel.UiState.Loading,
-            is EditKneeRecordViewModel.UiState.LoadSuccess -> {
+            EditKneeRecordViewModel.UiState.Initial, EditKneeRecordViewModel.UiState.Loading, is EditKneeRecordViewModel.UiState.LoadSuccess -> {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
@@ -176,29 +227,42 @@ private fun EditKneeRecordScreen(
                 }
             }
 
-            EditKneeRecordViewModel.UiState.Idle -> {
+            is EditKneeRecordViewModel.UiState.Idle,
+            is EditKneeRecordViewModel.UiState.InputError,
+            EditKneeRecordViewModel.UiState.UpdateInProgress,
+            is EditKneeRecordViewModel.UiState.UpdateSuccess,
+            is EditKneeRecordViewModel.UiState.UpdateError
+            -> {
                 EditKneeRecordForm(
                     modifier = Modifier.padding(innerPadding),
+
                     isRight = isRight,
                     setIsRight = { isRight = !isRight },
-                    note = note,
-                    setNote = { note = it },
-                    date = date,
-                    iconIds = iconIds,
-                    selectedIconId = selectedIconId,
-                    weather = weather,
-                    setWeather = setWeather,
+
                     pain = pain,
                     setPain = setPain,
                     sliderColor = sliderColor,
-                    setDate = setDate,
+
+                    iconIds = iconIds,
+                    selectedIconId = selectedIconId,
+                    setWeather = setWeather,
+
+                    date = date,
+                    datePicked = datePicked,
+                    selectedDate = selectedDate,
                     showDateDialog = showDateDialog,
                     changeDateDialogState = changeDateDialogState,
-                    selectedDate = selectedDate,
+                    setDate = setDate,
+
+                    time = time,
+                    timePicked = timePicked,
                     selectedTime = selectedTime,
                     showTimeDialog = showTimeDialog,
                     changeTimeDialogState = changeTimeDialogState,
                     setTime = setTime,
+
+                    note = note,
+                    setNote = { note = it },
                 )
             }
 
@@ -236,9 +300,32 @@ private fun EditKneeRecordScreen(
 
             }
 
-            EditKneeRecordViewModel.UiState.Idle -> {
+            is EditKneeRecordViewModel.UiState.Idle -> {
 
             }
+
+            is EditKneeRecordViewModel.UiState.InputError -> {
+                snackbarHostState.showSnackbar(
+                    message = context.getString(R.string.weather_empty),
+                )
+                moveToIdle()
+            }
+
+            EditKneeRecordViewModel.UiState.UpdateInProgress -> {
+
+            }
+
+            EditKneeRecordViewModel.UiState.UpdateSuccess -> {
+                back()
+            }
+
+            is EditKneeRecordViewModel.UiState.UpdateError -> {
+                snackbarHostState.showSnackbar(
+                    message = uiState.e.toString(),
+                )
+                moveToIdle()
+            }
+
         }
     }
 }
@@ -248,26 +335,34 @@ private fun EditKneeRecordScreen(
 @Composable
 fun EditKneeRecordForm(
     modifier: Modifier = Modifier,
-    date: Long,
-    note: String,
-    setNote: (String) -> Unit,
+
     isRight: Boolean,
     setIsRight: () -> Unit,
-    iconIds: List<Int>,
-    selectedIconId: Int?,
-    weather: String,
-    setWeather: (Int) -> Unit,
+
     pain: Float,
     setPain: (Float) -> Unit,
     sliderColor: Color,
-    setDate: (Long) -> Unit,
+
+    iconIds: List<Int>,
+    selectedIconId: Int?,
+    setWeather: (Int) -> Unit,
+
+    date: Long,
+    datePicked: Boolean,
+    selectedDate: LocalDate,
     showDateDialog: Boolean,
     changeDateDialogState: () -> Unit,
-    selectedDate: LocalDate,
+    setDate: (Long) -> Unit,
+
+    time: Long,
+    timePicked: Boolean,
     selectedTime: LocalTime,
     showTimeDialog: Boolean,
     changeTimeDialogState: () -> Unit,
     setTime: (LocalTime) -> Unit,
+
+    note: String,
+    setNote: (String) -> Unit,
 ) {
 
     val icons =
@@ -279,8 +374,7 @@ fun EditKneeRecordForm(
 
 
     Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.padding(start = 60.dp, end = 60.dp)
+        contentAlignment = Alignment.Center, modifier = Modifier.padding(start = 60.dp, end = 60.dp)
     ) {
         Column(
             modifier = modifier.fillMaxWidth(),
@@ -298,8 +392,7 @@ fun EditKneeRecordForm(
                 Text("右足")
             }
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start
             ) { Text("足の痛み") }
             Slider(
                 value = pain,
@@ -319,24 +412,15 @@ fun EditKneeRecordForm(
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 iconIds.forEach { id ->
-                    IconButton(
-                        onClick = { setWeather(id) }
-                    ) {
+                    IconButton(onClick = { setWeather(id) }) {
                         Icon(
-                            modifier = Modifier
-                                .size(48.dp),
+                            modifier = Modifier.size(48.dp),
                             imageVector = icons[id],
                             contentDescription = null,
-                            tint = if (selectedIconId == id)
-                                MaterialTheme
-                                    .colorScheme
-                                    .primaryContainer
-                            else MaterialTheme
-                                .colorScheme
-                                .onSurface
-                                .copy(
-                                    alpha = 0.6f
-                                )
+                            tint = if (selectedIconId == id) MaterialTheme.colorScheme.primaryContainer
+                            else MaterialTheme.colorScheme.onSurface.copy(
+                                alpha = 0.6f
+                            )
                         )
                     }
                 }
@@ -359,7 +443,12 @@ fun EditKneeRecordForm(
                 )
                 Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
                 Text(
-                    selectedDate.format(dateFormatter),
+                    text = if (datePicked) {
+                        selectedDate.format(dateFormatter)
+                    } else {
+                        Instant.ofEpochMilli(date).atZone(ZoneId.of("Asia/Tokyo")).toLocalDate().format(dateFormatter)
+
+                    },
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1
                 )
@@ -371,40 +460,31 @@ fun EditKneeRecordForm(
                 if (showDateDialog) {
                     val datePickerState =
                         rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
-                    AlertDialog(
-                        onDismissRequest = {
-                            changeDateDialogState
-                        },
-                        text = {
-                            DatePicker(
-                                state = datePickerState,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        },
-                        confirmButton = {
-                            Button(
-                                onClick = {
-                                    datePickerState.selectedDateMillis?.let {
-                                        setDate(it)
-                                    }
-                                }
-                            ) {
-                                Text("OK")
+                    AlertDialog(onDismissRequest = {
+                        changeDateDialogState
+                    }, text = {
+                        DatePicker(
+                            state = datePickerState, modifier = Modifier.fillMaxWidth()
+                        )
+                    }, confirmButton = {
+                        Button(onClick = {
+                            datePickerState.selectedDateMillis?.let {
+                                setDate(it)
                             }
-                        },
-                        dismissButton = {
-                            Button(
-                                onClick = changeDateDialogState
-                            ) {
-                                Text("キャンセル")
-                            }
-                        },
-                        properties = DialogProperties(
-                            usePlatformDefaultWidth = false
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth(0.99f)
-                            .height(screenHeight * 0.75f)
+                        }) {
+                            Text("OK")
+                        }
+                    }, dismissButton = {
+                        Button(
+                            onClick = changeDateDialogState
+                        ) {
+                            Text("キャンセル")
+                        }
+                    }, properties = DialogProperties(
+                        usePlatformDefaultWidth = false
+                    ), modifier = Modifier
+                        .fillMaxWidth(0.99f)
+                        .height(screenHeight * 0.75f)
                     )
                 }
             }
@@ -426,7 +506,11 @@ fun EditKneeRecordForm(
                 )
                 Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
                 Text(
-                    selectedTime.format(timeFormatter),
+                    text = if (timePicked) {
+                        selectedTime.format(timeFormatter)
+                    } else {
+                        Instant.ofEpochMilli(time).atZone(ZoneId.of("UTC")).toLocalTime().format(timeFormatter)
+                    },
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1
                 )
@@ -437,40 +521,32 @@ fun EditKneeRecordForm(
                 )
                 if (showTimeDialog) {
                     val timePickerState = rememberTimePickerState()
-                    AlertDialog(
-                        onDismissRequest = {
-                            changeTimeDialogState
-                        },
-                        text = {
-                            TimePicker(
-                                state = timePickerState,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        },
-                        confirmButton = {
-                            Button(
-                                onClick = {
-                                    val newTime = LocalTime.of(timePickerState.hour, timePickerState.minute)
-                                    setTime(newTime)
-                                }
+                    AlertDialog(onDismissRequest = {
+                        changeTimeDialogState
+                    }, text = {
+                        TimePicker(
+                            state = timePickerState, modifier = Modifier.fillMaxWidth()
+                        )
+                    }, confirmButton = {
+                        Button(onClick = {
+                            val newTime = LocalTime.of(timePickerState.hour, timePickerState.minute)
+                            setTime(newTime)
+                        }
 
-                            ) {
-                                Text("OK")
-                            }
-                        },
-                        dismissButton = {
-                            Button(
-                                onClick = changeTimeDialogState
-                            ) {
-                                Text("キャンセル")
-                            }
-                        },
-                        properties = DialogProperties(
-                            usePlatformDefaultWidth = false
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth(0.99f)
-                            .height(screenHeight * 0.75f)
+                        ) {
+                            Text("OK")
+                        }
+                    }, dismissButton = {
+                        Button(
+                            onClick = changeTimeDialogState
+                        ) {
+                            Text("キャンセル")
+                        }
+                    }, properties = DialogProperties(
+                        usePlatformDefaultWidth = false
+                    ), modifier = Modifier
+                        .fillMaxWidth(0.99f)
+                        .height(screenHeight * 0.75f)
                     )
                 }
             }

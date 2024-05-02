@@ -1,5 +1,6 @@
 package com.example.kneediary.ui.screens.record_screen.record_screen
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -127,10 +128,10 @@ private fun RecordScreen(
         listOf(Icons.Filled.WbSunny, Icons.Filled.Cloud, Icons.Filled.Umbrella, Icons.Filled.AcUnit)
 
 //    val datePickerState = rememberDatePickerState()
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var selectedDate by remember { mutableStateOf(LocalDate.now(ZoneId.of("Asia/Tokyo"))) }
     //dateをLong型で定義。このミリ秒は、選択された日付の午前0時からのミリ秒のこと。
     //これと、timeのミリ秒を足し合わせることで、日時を表す。
-    val date: Long = selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    val date: Long = selectedDate.atStartOfDay(ZoneId.of("Asia/Tokyo")).toInstant().toEpochMilli()
     var showDateDialog by remember { mutableStateOf(false) }
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
 
@@ -169,7 +170,7 @@ private fun RecordScreen(
                     IconButton(onClick = back) {
                         Icon(Icons.Rounded.Close, contentDescription = "閉じる")
                     }
-                }
+                },
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -250,11 +251,16 @@ private fun RecordScreen(
                             modifier = commonSize
                         )
                         Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
+
+                        //////////////////////////////////////////////////////
                         Text(
+                            //LocalDate!型のselectedDateを〇〇年〇〇月〇〇日に変換
                             selectedDate.format(dateFormatter),
                             style = MaterialTheme.typography.titleMedium,
                             maxLines = 1
                         )
+                        //////////////////////////////////////////////////////
+
                         Icon(
                             imageVector = Icons.Rounded.ArrowDropDown,
                             contentDescription = "表示",
@@ -280,7 +286,7 @@ private fun RecordScreen(
                                             selectedDate = Instant.ofEpochMilli(
                                                 datePickerState.selectedDateMillis
                                                     ?: System.currentTimeMillis()
-                                            ).atZone(ZoneId.systemDefault()).toLocalDate()
+                                            ).atZone(ZoneId.of("Asia/Tokyo")).toLocalDate()
                                         }
                                     ) {
                                         Text("OK")

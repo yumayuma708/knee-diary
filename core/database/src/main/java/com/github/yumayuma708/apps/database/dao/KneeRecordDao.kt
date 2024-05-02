@@ -3,6 +3,7 @@ package com.github.yumayuma708.apps.database.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.github.yumayuma708.apps.database.model.KneeRecordEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -23,4 +24,7 @@ interface KneeRecordDao {
 
     @Query("SELECT * FROM knee_record order by updatedAt desc")  //一番最新のものが一番最初にくるような順番でデータを取得する。このSQLを書くことでRoomが勝手にデータを取得してこの順番で表示してくれる。データに追加や更新があった場合も、自動で更新してくれる。
     fun getAll(): Flow<List<KneeRecordEntity>>  //戻り値の型は、:core:databaseモジュールでKneeRecordEntityを扱うようにしているため、Flow<List<KneeRecordEntity>>になっている。
+
+    @Update
+    suspend fun update(entity: KneeRecordEntity)
 }

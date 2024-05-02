@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Knee Diary</string>
     <string name="weather_empty">天気を選択してください</string>
+    <string name="edit_knee_record">記録を編集</string>
 </resources>
