@@ -2,6 +2,7 @@
 
 package com.example.kneediary.ui.screens.navigated_screen.home_screen.edit_screen
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -132,12 +133,12 @@ private fun EditKneeRecordScreen(
     LaunchedEffect(uiState) {
         if (uiState is EditKneeRecordViewModel.UiState.LoadSuccess && !datePicked) {
             date = uiState.kneeRecord.date
-            selectedDate = Instant.ofEpochMilli(date).atZone(ZoneId.of("UTC")).toLocalDate()
+            selectedDate = Instant.ofEpochMilli(date).atZone(ZoneId.of("Asia/Tokyo")).toLocalDate()
         }
     }
     val setDate: (Long) -> Unit = { newDate ->
         date = newDate
-        selectedDate = Instant.ofEpochMilli(newDate).atZone(ZoneId.of("UTC")).toLocalDate()
+        selectedDate = Instant.ofEpochMilli(newDate).atZone(ZoneId.of("Asia/Tokyo")).toLocalDate()
         showDateDialog = false
     }
     val changeDateDialogState: () -> Unit = {
@@ -152,7 +153,7 @@ private fun EditKneeRecordScreen(
             println("timeが0なので、現在の時刻を使用します")
             LocalTime.now()
         } else {
-            Instant.ofEpochMilli(time).atZone(ZoneId.of("UTC")).toLocalTime()
+            Instant.ofEpochMilli(time).atZone(ZoneId.of("Asia/Tokyo")).toLocalTime()
         }
     }
     val setTime: (LocalTime) -> Unit = { newTime ->
@@ -440,11 +441,13 @@ fun EditKneeRecordForm(
                     text = if (datePicked) {
                         selectedDate.format(dateFormatter)
                     } else {
-                        Instant.ofEpochMilli(date).atZone(ZoneId.of("UTC")).toLocalDate().format(dateFormatter)
+                        Instant.ofEpochMilli(date).atZone(ZoneId.of("Asia/Tokyo")).toLocalDate().format(dateFormatter)
+
                     },
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1
                 )
+                Log.d("記録された時刻","${Instant.ofEpochMilli(date).atZone(ZoneId.of("Asia/Tokyo")).toLocalDate()}")
                 ////////////////////////////////////////////////////////
 
                 Icon(
