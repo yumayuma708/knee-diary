@@ -1,10 +1,19 @@
 package com.example.kneediary.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AcUnit
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material.icons.rounded.Help
 import androidx.compose.material.icons.rounded.MoodBad
@@ -15,33 +24,26 @@ import androidx.compose.material.icons.rounded.SentimentVeryDissatisfied
 import androidx.compose.material.icons.rounded.Umbrella
 import androidx.compose.material.icons.rounded.WbCloudy
 import androidx.compose.material.icons.rounded.WbSunny
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
-import com.github.yumayuma708.apps.model.KneeRecord
-import java.util.Date
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import com.github.yumayuma708.apps.model.KneeRecord
+import java.util.Date
 
 
 @Composable
 fun KneeRecordListItem(
     kneeRecord: KneeRecord,
-    onClick : () -> Unit,
+    onClick: () -> Unit,
 ) {
 
     fun extractDateTime(datePlusTime: Long): List<String> {
@@ -101,6 +103,15 @@ fun KneeRecordListItem(
         1.0f -> Icons.Rounded.SentimentVeryDissatisfied
         else -> Icons.Rounded.Face
     }
+    val customOrange = Color(1f, 165f / 255f, 0f)
+    val painIconColor = when (kneeRecord.pain) {
+        0.0f ->Color.Cyan
+        0.25f -> Color.Blue
+        0.5f -> Color.Green
+        0.75f -> customOrange
+        1.0f -> Color.Red
+        else -> Color.Black
+    }
     val isRight = when (kneeRecord.isRight) {
         true -> "右"
         false -> "左"
@@ -117,8 +128,8 @@ fun KneeRecordListItem(
             headlineContent = {
                 Column {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                        verticalAlignment = Alignment.CenterVertically,
+                        ) {
                         Text(
                             text = "$definedMonth $definedDay $definedDate",
                             style = MaterialTheme.typography.titleLarge
@@ -145,6 +156,7 @@ fun KneeRecordListItem(
                     Icon(
                         imageVector = painIcon,
                         contentDescription = "Localized description",
+                        tint = painIconColor,
                     )
                 }
             },
@@ -157,15 +169,15 @@ fun KneeRecordListItem(
                 )
             },
             trailingContent = {
-                Row (
+                Row(
                     horizontalArrangement = Arrangement.End
-                ){
+                ) {
                     IconButton(
                         onClick = {
                             onClick()
                         }
                     ) {
-                        Icon(imageVector =Icons.Rounded.Edit, contentDescription = "編集")
+                        Icon(imageVector = Icons.Rounded.Edit, contentDescription = "編集")
                     }
 
                     IconButton(
@@ -173,7 +185,7 @@ fun KneeRecordListItem(
                             //削除の確認のポップアップを表示
                         }
                     ) {
-                        Icon(imageVector =Icons.Rounded.Delete, contentDescription = "削除")
+                        Icon(imageVector = Icons.Rounded.Delete, contentDescription = "削除")
                     }
                 }
             }
