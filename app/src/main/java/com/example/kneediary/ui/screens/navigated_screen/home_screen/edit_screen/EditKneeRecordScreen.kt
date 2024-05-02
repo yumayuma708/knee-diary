@@ -149,14 +149,12 @@ private fun EditKneeRecordScreen(
     var time by remember { mutableStateOf(System.currentTimeMillis()) }
     var selectedTime by remember { mutableStateOf(LocalTime.now()) }
     var timePicked by remember { mutableStateOf(false) }
-    Log.d("時刻1",selectedTime.toString())
     LaunchedEffect(uiState) {
         if (uiState is EditKneeRecordViewModel.UiState.LoadSuccess && !timePicked) {
             time = uiState.kneeRecord.time
             selectedTime = Instant.ofEpochMilli(time).atZone(ZoneId.of("Asia/Tokyo")).toLocalTime()
         } else {
             Instant.ofEpochMilli(time).atZone(ZoneId.of("Asia/Tokyo")).toLocalTime()
-            Log.d("時刻3",selectedTime.toString())
         }
     }
     val setTime: (LocalTime) -> Unit = { newTime ->
@@ -444,8 +442,6 @@ fun EditKneeRecordForm(
                     modifier = commonSize
                 )
                 Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
-
-                ////////////////////////////////////////////////////////
                 Text(
                     text = if (datePicked) {
                         selectedDate.format(dateFormatter)
@@ -456,8 +452,6 @@ fun EditKneeRecordForm(
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1
                 )
-                ////////////////////////////////////////////////////////
-
                 Icon(
                     imageVector = Icons.Rounded.ArrowDropDown,
                     contentDescription = "表示",
@@ -511,8 +505,6 @@ fun EditKneeRecordForm(
                     modifier = commonSize
                 )
                 Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
-
-                //////////////////////////////////////////////////////////////
                 Text(
                     text = if (timePicked) {
                         selectedTime.format(timeFormatter)
@@ -522,11 +514,6 @@ fun EditKneeRecordForm(
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1
                 )
-                Log.d("if",timePicked.toString())
-                Log.d("time",time.toString())
-                Log.d("時刻4",selectedTime.toString())
-                //////////////////////////////////////////////////////////////
-
                 Icon(
                     imageVector = Icons.Rounded.ArrowDropDown,
                     contentDescription = "表示",
