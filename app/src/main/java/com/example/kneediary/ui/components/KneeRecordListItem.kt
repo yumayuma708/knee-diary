@@ -180,15 +180,6 @@ fun KneeRecordListItem(
                     ) {
                         Icon(imageVector = Icons.Rounded.Edit, contentDescription = "編集")
                     }
-
-                    IconButton(
-                        onClick = {
-                            Log.d("メッセージ", "削除ボタンが押されました")
-                            showDeleteDialog()
-                        }
-                    ) {
-                        Icon(imageVector = Icons.Rounded.Delete, contentDescription = "削除")
-                    }
                 }
             }
         )
