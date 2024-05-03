@@ -1,6 +1,6 @@
 package com.example.kneediary.ui.components
 
-import androidx.compose.foundation.background
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +44,7 @@ import java.util.Date
 fun KneeRecordListItem(
     kneeRecord: KneeRecord,
     onClick: () -> Unit,
+    showDeleteDialog: () -> Unit
 ) {
 
     fun extractDateTime(datePlusTime: Long): List<String> {
@@ -105,7 +106,7 @@ fun KneeRecordListItem(
     }
     val customOrange = Color(1f, 165f / 255f, 0f)
     val painIconColor = when (kneeRecord.pain) {
-        0.0f ->Color.Cyan
+        0.0f -> Color.Cyan
         0.25f -> Color.Blue
         0.5f -> Color.Green
         0.75f -> customOrange
@@ -129,7 +130,7 @@ fun KneeRecordListItem(
                 Column {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        ) {
+                    ) {
                         Text(
                             text = "$definedMonth $definedDay $definedDate",
                             style = MaterialTheme.typography.titleLarge
@@ -182,7 +183,8 @@ fun KneeRecordListItem(
 
                     IconButton(
                         onClick = {
-                            //削除の確認のポップアップを表示
+                            Log.d("メッセージ", "削除ボタンが押されました")
+                            showDeleteDialog()
                         }
                     ) {
                         Icon(imageVector = Icons.Rounded.Delete, contentDescription = "削除")

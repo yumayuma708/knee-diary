@@ -41,6 +41,7 @@ private fun DateScreen(
                     onClick = {
                         toEdit(kneeRecordList[it].id)
                     },
+                    showDeleteDialog = { },
                 )
             })
     }

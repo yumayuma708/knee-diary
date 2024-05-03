@@ -76,6 +76,21 @@ class LocalKneeRecordRepository @Inject constructor(
         kneeRecordDao.update(entity)
     }
 
+    override suspend fun delete(kneeRecord: KneeRecord) {
+        val entity = KneeRecordEntity(
+            id = kneeRecord.id,
+            date = kneeRecord.date,
+            time = kneeRecord.time,
+            isRight = kneeRecord.isRight,
+            pain = kneeRecord.pain,
+            weather = kneeRecord.weather,
+            note = kneeRecord.note,
+            createdAt = kneeRecord.createdAt,
+            updatedAt = System.currentTimeMillis(),
+        )
+        kneeRecordDao.delete(entity)
+    }
+
     override suspend fun getById(id: Long): KneeRecord? {
         return kneeRecordDao.getById(id)?.toModel()
     }

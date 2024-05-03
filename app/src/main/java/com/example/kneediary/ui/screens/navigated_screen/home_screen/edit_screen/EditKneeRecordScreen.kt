@@ -2,7 +2,6 @@
 
 package com.example.kneediary.ui.screens.navigated_screen.home_screen.edit_screen
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

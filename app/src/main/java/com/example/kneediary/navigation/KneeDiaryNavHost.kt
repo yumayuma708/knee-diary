@@ -1,5 +1,6 @@
 package com.example.kneediary.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -44,7 +45,7 @@ fun KneeDiaryNavHost(
                 viewModel = viewModel,
                 toEdit = {kneeRecordId ->
                     navController.navigate("/edit/$kneeRecordId")
-                }
+                },
             )
         }
         composable(route = Nav.NoteScreen.name) {

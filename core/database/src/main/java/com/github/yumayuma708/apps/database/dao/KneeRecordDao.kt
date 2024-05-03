@@ -1,6 +1,7 @@
 package com.github.yumayuma708.apps.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -27,4 +28,7 @@ interface KneeRecordDao {
 
     @Update
     suspend fun update(entity: KneeRecordEntity)
+
+    @Delete
+    suspend fun delete(entity: KneeRecordEntity)
 }
