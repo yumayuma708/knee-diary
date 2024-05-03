@@ -32,6 +32,10 @@ class EditKneeRecordViewModel @Inject constructor(
         data object UpdateInProgress : UiState
         data object UpdateSuccess : UiState
         data class UpdateError(val kneeRecord: KneeRecord, val e: Exception) : UiState
+        data class ConfirmDelete(val kneeRecord: KneeRecord) : UiState
+        data object DeleteInProgress : UiState
+        data object DeleteSuccess : UiState
+        data class DeleteError(val kneeRecord: KneeRecord, val e: Exception) : UiState
     }
 
     //UiState型のMutableStateFlowを作成し、初期値をUiState.Initialに設定している。
@@ -66,6 +70,10 @@ class EditKneeRecordViewModel @Inject constructor(
         } else if (currentState is UiState.InputError) {
             _uiState.value = UiState.Idle(currentState.kneeRecord)
         } else if (currentState is UiState.UpdateError) {
+            _uiState.value = UiState.Idle(currentState.kneeRecord)
+        } else if (currentState is UiState.ConfirmDelete) {
+            _uiState.value = UiState.Idle(currentState.kneeRecord)
+        } else if (currentState is UiState.DeleteError) {
             _uiState.value = UiState.Idle(currentState.kneeRecord)
         }
     }
@@ -102,6 +110,30 @@ class EditKneeRecordViewModel @Inject constructor(
                 _uiState.value = UiState.UpdateSuccess
             } catch (e: Exception) {
                 _uiState.value = UiState.UpdateError(currentState.kneeRecord, e)
+            }
+        }
+    }
+
+    fun showDeleteDialog() {
+        val currentState = _uiState.value
+        if (currentState !is UiState.Idle) {
+            return
+        }
+        _uiState.value = UiState.ConfirmDelete(currentState.kneeRecord)
+    }
+
+    fun delete() {
+        val currentState = _uiState.value
+        if (currentState !is UiState.ConfirmDelete) {
+            return
+        }
+        _uiState.value = UiState.DeleteInProgress
+        viewModelScope.launch {
+            try {
+                repository.delete(currentState.kneeRecord)
+                _uiState.value = UiState.DeleteSuccess
+            } catch (e: Exception) {
+                _uiState.value = UiState.DeleteError(currentState.kneeRecord, e)
             }
         }
     }
