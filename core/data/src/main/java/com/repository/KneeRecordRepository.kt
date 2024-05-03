@@ -18,4 +18,5 @@ interface KneeRecordRepository {
 
     fun getAll(): Flow<List<KneeRecord>>
     suspend fun update(kneeRecord: KneeRecord)
+    suspend fun delete(kneeRecord: KneeRecord)
 }

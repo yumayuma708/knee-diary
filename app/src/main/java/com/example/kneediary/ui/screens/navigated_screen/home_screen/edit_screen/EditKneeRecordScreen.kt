@@ -2,7 +2,6 @@
 
 package com.example.kneediary.ui.screens.navigated_screen.home_screen.edit_screen
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Umbrella
 import androidx.compose.material.icons.filled.WbSunny
@@ -40,6 +40,7 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
@@ -84,7 +85,13 @@ fun EditKneeRecordScreen(
         back = back,
         update = { isRight, pain, weather, note, date, time ->
             viewModel.update(isRight, pain, weather, note, date, time)
-        }
+        },
+        showDeleteDialog = {
+            viewModel.showDeleteDialog()
+        },
+        delete = {
+            viewModel.delete()
+        },
     )
 }
 
@@ -96,6 +103,8 @@ private fun EditKneeRecordScreen(
     moveToIdle: () -> Unit,
     back: () -> Unit,
     update: (Boolean, Float, String, String, Long, Long) -> Unit,
+    showDeleteDialog: () -> Unit,
+    delete: () -> Unit,
 ) {
     var isRight by remember { mutableStateOf(false) }
     var pain by remember { mutableStateOf(0f) }
@@ -161,7 +170,8 @@ private fun EditKneeRecordScreen(
         selectedTime = newTime
         showTimeDialog = false
         timePicked = true
-        time = selectedTime.atDate(LocalDate.now()).atZone(ZoneId.of("UTC")).toInstant().toEpochMilli()
+        time =
+            selectedTime.atDate(LocalDate.now()).atZone(ZoneId.of("UTC")).toInstant().toEpochMilli()
     }
     val changeTimeDialogState: () -> Unit = {
         showTimeDialog = !showTimeDialog
@@ -174,33 +184,32 @@ private fun EditKneeRecordScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(stringResource(R.string.edit_knee_record))
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = back
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = "戻る"
-                        )
-                    }
-                },
-                actions = {
-                    if (uiState is EditKneeRecordViewModel.UiState.Idle) {
-                        IconButton(
-                            onClick = {
-                                update(isRight, pain, weather, note, date, time)
-                            }
-                        ) {
-                            Icon(imageVector = Icons.Filled.Done, contentDescription = "保存")
-                        }
-                    }
-
+            TopAppBar(title = {
+                Text(stringResource(R.string.edit_knee_record))
+            }, navigationIcon = {
+                IconButton(
+                    onClick = back
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                        contentDescription = "戻る"
+                    )
                 }
-            )
+            }, actions = {
+                if (uiState is EditKneeRecordViewModel.UiState.Idle) {
+                    IconButton(onClick = {
+                        update(isRight, pain, weather, note, date, time)
+                    }) {
+                        Icon(imageVector = Icons.Filled.Done, contentDescription = "保存")
+                    }
+                    IconButton(onClick = {
+                        showDeleteDialog()
+                    }) {
+                        Icon(imageVector = Icons.Filled.Delete, contentDescription = "削除")
+                    }
+                }
+
+            })
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
@@ -231,7 +240,11 @@ private fun EditKneeRecordScreen(
             is EditKneeRecordViewModel.UiState.InputError,
             EditKneeRecordViewModel.UiState.UpdateInProgress,
             is EditKneeRecordViewModel.UiState.UpdateSuccess,
-            is EditKneeRecordViewModel.UiState.UpdateError
+            is EditKneeRecordViewModel.UiState.UpdateError,
+            is EditKneeRecordViewModel.UiState.ConfirmDelete,
+            is EditKneeRecordViewModel.UiState.DeleteError,
+            EditKneeRecordViewModel.UiState.DeleteInProgress,
+            EditKneeRecordViewModel.UiState.DeleteSuccess
             -> {
                 EditKneeRecordForm(
                     modifier = Modifier.padding(innerPadding),
@@ -264,7 +277,32 @@ private fun EditKneeRecordScreen(
                     note = note,
                     setNote = { note = it },
                 )
+                if (uiState is EditKneeRecordViewModel.UiState.ConfirmDelete) {
+                    AlertDialog(
+                        onDismissRequest = {
+                        moveToIdle()
+                        },
+                        text = {
+                            Text(stringResource(R.string.delete_message))
+                        },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                delete()
+                            }) {
+                                Text(stringResource(android.R.string.ok))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = {
+                                moveToIdle()
+                            }) {
+                                Text(stringResource(android.R.string.cancel))
+                            }
+                        },
+                    )
+                }
             }
+
 
         }
 
@@ -326,6 +364,22 @@ private fun EditKneeRecordScreen(
                 moveToIdle()
             }
 
+            is EditKneeRecordViewModel.UiState.ConfirmDelete -> {
+
+            }
+
+            is EditKneeRecordViewModel.UiState.DeleteError -> {
+                snackbarHostState.showSnackbar(
+                    message = uiState.e.toString(),
+                )
+                moveToIdle()
+            }
+            EditKneeRecordViewModel.UiState.DeleteInProgress -> {
+
+            }
+            EditKneeRecordViewModel.UiState.DeleteSuccess -> {
+                back()
+            }
         }
     }
 }
@@ -446,11 +500,10 @@ fun EditKneeRecordForm(
                     text = if (datePicked) {
                         selectedDate.format(dateFormatter)
                     } else {
-                        Instant.ofEpochMilli(date).atZone(ZoneId.of("Asia/Tokyo")).toLocalDate().format(dateFormatter)
+                        Instant.ofEpochMilli(date).atZone(ZoneId.of("Asia/Tokyo")).toLocalDate()
+                            .format(dateFormatter)
 
-                    },
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1
+                    }, style = MaterialTheme.typography.titleMedium, maxLines = 1
                 )
                 Icon(
                     imageVector = Icons.Rounded.ArrowDropDown,
@@ -509,10 +562,9 @@ fun EditKneeRecordForm(
                     text = if (timePicked) {
                         selectedTime.format(timeFormatter)
                     } else {
-                        Instant.ofEpochMilli(time).atZone(ZoneId.of("UTC")).toLocalTime().format(timeFormatter)
-                    },
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1
+                        Instant.ofEpochMilli(time).atZone(ZoneId.of("UTC")).toLocalTime()
+                            .format(timeFormatter)
+                    }, style = MaterialTheme.typography.titleMedium, maxLines = 1
                 )
                 Icon(
                     imageVector = Icons.Rounded.ArrowDropDown,
@@ -551,8 +603,7 @@ fun EditKneeRecordForm(
                 }
             }
             Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
-            OutlinedTextField(
-                value = note,
+            OutlinedTextField(value = note,
                 onValueChange = setNote,
                 label = { Text("メモ") },
                 placeholder = { Text("例：右足の外側が痛い") },
