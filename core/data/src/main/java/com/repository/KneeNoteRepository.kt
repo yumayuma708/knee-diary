@@ -6,5 +6,7 @@ interface KneeNoteRepository {
     suspend fun create(
         title: String,
         description: String,
+        date: Long,
+        time: Long,
     ): KneeNote
 }
