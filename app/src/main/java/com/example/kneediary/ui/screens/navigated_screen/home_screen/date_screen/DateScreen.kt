@@ -44,7 +44,8 @@ private fun DateScreen(
                         toEdit(kneeRecordList[it].id)
                     },
                 )
-            })
+            }
+        )
     }
 }
 

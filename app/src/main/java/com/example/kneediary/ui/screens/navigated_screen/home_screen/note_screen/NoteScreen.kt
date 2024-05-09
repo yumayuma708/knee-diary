@@ -44,7 +44,8 @@ private fun NoteScreen(
                         toEdit(kneeNoteList[it].id)
                     },
                 )
-            })
+            }
+        )
     }
 }
 
