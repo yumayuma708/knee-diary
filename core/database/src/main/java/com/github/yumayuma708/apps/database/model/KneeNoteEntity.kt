@@ -4,17 +4,15 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "knee_record",
+    tableName = "knee_note",
 )
-data class KneeRecordEntity(
+data class KneeNoteEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
+    val title: String,
+    val description: String,
     val date: Long,
     val time: Long,
-    val isRight: Boolean,
-    val pain: Float,
-    val weather: String,
-    val note: String,
     val createdAt: Long,
     val updatedAt: Long,
 )
