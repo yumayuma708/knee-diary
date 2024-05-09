@@ -17,6 +17,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.github.yumayuma708.apps.model.KneeNote
 import java.util.Date
@@ -90,12 +95,6 @@ fun KneeNoteListItem(
                             text = "$definedMonth $definedDay $definedDate",
                             style = MaterialTheme.typography.titleLarge
                         )
-//                        Box(modifier = Modifier.padding(4.dp))
-//                        Icon(
-//                            imageVector = weatherIconId,
-//                            contentDescription = "weather",
-//                            modifier = Modifier.size(22.dp),
-//                        )
                         Box(modifier = Modifier.padding(4.dp))
                         Text(
                             text = definedTime,
@@ -104,29 +103,23 @@ fun KneeNoteListItem(
                     }
                 }
             },
-//            leadingContent = {
-//                Box(
-//                    modifier = Modifier.fillMaxHeight(),
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                    Icon(
-//                        imageVector = painIcon,
-//                        contentDescription = "Localized description",
-//                        tint = painIconColor,
-//                    )
-//                }
-//            },
-//            supportingContent = {
-//                Text(
-//                    "$isRight：$note",
-//                    style = MaterialTheme.typography.titleMedium,
-//                    maxLines = 1,
-//                    overflow = TextOverflow.Ellipsis
-//                )
-//            },
+            supportingContent = {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("$title：")
+                        }
+                        append(description)
+                    },
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            },
             trailingContent = {
                 Row(
-                    horizontalArrangement = Arrangement.End
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     IconButton(
                         onClick = {
