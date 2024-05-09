@@ -1,29 +1,14 @@
 package com.example.kneediary.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AcUnit
-import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.Face
-import androidx.compose.material.icons.rounded.Help
-import androidx.compose.material.icons.rounded.MoodBad
-import androidx.compose.material.icons.rounded.SentimentDissatisfied
-import androidx.compose.material.icons.rounded.SentimentNeutral
-import androidx.compose.material.icons.rounded.SentimentSatisfied
-import androidx.compose.material.icons.rounded.SentimentVeryDissatisfied
-import androidx.compose.material.icons.rounded.Umbrella
-import androidx.compose.material.icons.rounded.WbCloudy
-import androidx.compose.material.icons.rounded.WbSunny
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -32,19 +17,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.github.yumayuma708.apps.model.KneeRecord
+import com.github.yumayuma708.apps.model.KneeNote
 import java.util.Date
 
 
 @Composable
-fun KneeRecordListItem(
-    kneeRecord: KneeRecord,
+fun KneeNoteListItem(
+    kneeNote: KneeNote,
     onClick: () -> Unit,
 ) {
+    val title = kneeNote.title
+    val description = kneeNote.description.ifEmpty {
+        "詳細なし"
+    }
 
     fun extractDateTime(datePlusTime: Long): List<String> {
         val datePlusTimeDate = Date(datePlusTime)
@@ -57,8 +43,8 @@ fun KneeRecordListItem(
         return listOf(date, month, day, time)
     }
 
-    val date = kneeRecord.date
-    val time = kneeRecord.time
+    val date = kneeNote.date
+    val time = kneeNote.time
     val datePlusTime = (date + time)
     val dateInfo = extractDateTime(datePlusTime)
     val definedDate = when (dateInfo[0]) {
@@ -88,37 +74,7 @@ fun KneeRecordListItem(
     }
     val definedTime = dateInfo[3]
     val definedDay = dateInfo[2] + "日"
-    val weatherIconId: ImageVector = when (kneeRecord.weather) {
-        "sunny" -> Icons.Rounded.WbSunny
-        "cloudy" -> Icons.Rounded.WbCloudy
-        "rainy" -> Icons.Rounded.Umbrella
-        "snowy" -> Icons.Rounded.AcUnit
-        else -> Icons.Rounded.Help
-    }
-    val painIcon = when (kneeRecord.pain) {
-        0.0f -> Icons.Rounded.SentimentSatisfied
-        0.25f -> Icons.Rounded.SentimentNeutral
-        0.5f -> Icons.Rounded.SentimentDissatisfied
-        0.75f -> Icons.Rounded.MoodBad
-        1.0f -> Icons.Rounded.SentimentVeryDissatisfied
-        else -> Icons.Rounded.Face
-    }
-    val customOrange = Color(1f, 165f / 255f, 0f)
-    val painIconColor = when (kneeRecord.pain) {
-        0.0f -> Color.Cyan
-        0.25f -> Color.Blue
-        0.5f -> Color.Green
-        0.75f -> customOrange
-        1.0f -> Color.Red
-        else -> Color.Black
-    }
-    val isRight = when (kneeRecord.isRight) {
-        true -> "右"
-        false -> "左"
-    }
-    val note = kneeRecord.note.ifEmpty {
-        "メモなし"
-    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -134,12 +90,12 @@ fun KneeRecordListItem(
                             text = "$definedMonth $definedDay $definedDate",
                             style = MaterialTheme.typography.titleLarge
                         )
-                        Box(modifier = Modifier.padding(4.dp))
-                        Icon(
-                            imageVector = weatherIconId,
-                            contentDescription = "weather",
-                            modifier = Modifier.size(22.dp),
-                        )
+//                        Box(modifier = Modifier.padding(4.dp))
+//                        Icon(
+//                            imageVector = weatherIconId,
+//                            contentDescription = "weather",
+//                            modifier = Modifier.size(22.dp),
+//                        )
                         Box(modifier = Modifier.padding(4.dp))
                         Text(
                             text = definedTime,
@@ -148,26 +104,26 @@ fun KneeRecordListItem(
                     }
                 }
             },
-            leadingContent = {
-                Box(
-                    modifier = Modifier.fillMaxHeight(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = painIcon,
-                        contentDescription = "Localized description",
-                        tint = painIconColor,
-                    )
-                }
-            },
-            supportingContent = {
-                Text(
-                    "$isRight：$note",
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            },
+//            leadingContent = {
+//                Box(
+//                    modifier = Modifier.fillMaxHeight(),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    Icon(
+//                        imageVector = painIcon,
+//                        contentDescription = "Localized description",
+//                        tint = painIconColor,
+//                    )
+//                }
+//            },
+//            supportingContent = {
+//                Text(
+//                    "$isRight：$note",
+//                    style = MaterialTheme.typography.titleMedium,
+//                    maxLines = 1,
+//                    overflow = TextOverflow.Ellipsis
+//                )
+//            },
             trailingContent = {
                 Row(
                     horizontalArrangement = Arrangement.End

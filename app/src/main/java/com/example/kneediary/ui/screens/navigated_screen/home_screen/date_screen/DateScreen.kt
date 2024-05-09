@@ -2,14 +2,12 @@
 
 package com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.kneediary.ui.components.KneeRecordListItem
 import com.github.yumayuma708.apps.model.KneeRecord
 
@@ -45,9 +43,9 @@ private fun DateScreen(
                     onClick = {
                         toEdit(kneeRecordList[it].id)
                     },
-                    showDeleteDialog = { },
                 )
-            })
+            }
+        )
     }
 }
 
