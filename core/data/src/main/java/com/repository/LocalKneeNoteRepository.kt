@@ -3,6 +3,8 @@ package com.repository
 import com.github.yumayuma708.apps.database.dao.KneeNoteDao
 import com.github.yumayuma708.apps.database.model.KneeNoteEntity
 import com.github.yumayuma708.apps.model.KneeNote
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class LocalKneeNoteRepository @Inject constructor(
@@ -36,4 +38,22 @@ class LocalKneeNoteRepository @Inject constructor(
             updatedAt = kneeNote.updatedAt,
         )
     }
+
+    override fun getAll(): Flow<List<KneeNote>> {
+        return kneeNoteDao.getAll().map { items ->
+            items.map { item -> item.toModel() }
+        }
+    }
+}
+
+private fun KneeNoteEntity.toModel(): KneeNote {
+    return KneeNote(
+        id = id,
+        title = title,
+        description = description,
+        date = date,
+        time = time,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+    )
 }
