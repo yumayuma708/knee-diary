@@ -27,12 +27,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,12 +43,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.kneediary.R
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -63,7 +67,10 @@ fun RecordNoteScreen(
         uiState = uiState,
         create = { title, description, date, time ->
             viewModel.create(title, description, date, time) },
-        back = { /*TODO*/ },
+        back = back,
+        moveToIdle = {
+            viewModel.moveToIdle()
+        },
     )
 }
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,6 +79,7 @@ private fun RecordNoteScreen(
     uiState: RecordNoteScreenViewModel.UiState,
     create: (String, String, Long, Long) -> Unit,
     back: () -> Unit,
+    moveToIdle: () -> Unit,
 ){
     var title by remember { mutableStateOf("") }
 
@@ -89,6 +97,9 @@ private fun RecordNoteScreen(
 
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -298,7 +309,27 @@ private fun RecordNoteScreen(
                     }
                 }
             }
-        })
+        }
+    )
+
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is RecordNoteScreenViewModel.UiState.CreateError -> TODO()
+            RecordNoteScreenViewModel.UiState.Idle -> {
+
+            }
+            RecordNoteScreenViewModel.UiState.InputError -> {
+
+                snackbarHostState.showSnackbar(
+                    message = context.getString(R.string.title_empty),
+                )
+                moveToIdle()
+            }
+            RecordNoteScreenViewModel.UiState.Success -> {
+                back()
+            }
+        }
+    }
 }
 
 @Preview
@@ -308,5 +339,6 @@ fun RecordNoteScreenPreview() {
         uiState= RecordNoteScreenViewModel.UiState.Idle,
         back = {},
         create = { _, _, _, _ -> },
+        moveToIdle = {},
     )
 }
