@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.kneediary.navigation.Nav
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -58,13 +57,16 @@ import java.time.format.DateTimeFormatter
 fun RecordNoteScreen(
     navController: NavHostController,
 ) {
-    var note by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+
     var showDateDialog by remember { mutableStateOf(false) }
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
     var selectedTime by remember { mutableStateOf(LocalTime.now()) }
     var showTimeDialog by remember { mutableStateOf(false) }
     val timeFormatter = DateTimeFormatter.ofPattern("HH時mm分")
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
 
@@ -247,11 +249,18 @@ fun RecordNoteScreen(
                     }
                     Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
                     OutlinedTextField(
-                        value = note,
-                        onValueChange = { note = it },
+                        value = title,
+                        onValueChange = { title = it },
+                        label = { Text("タイトル") },
+                        modifier = Modifier.height(screenHeight * 0.08f),
+                        maxLines = 1,
+                    )
+                    Box(modifier = Modifier.size(width = 20.dp, height = 10.dp))
+                    OutlinedTextField(
+                        value = description,
+                        onValueChange = { description = it },
                         label = { Text("メモ") },
-                        placeholder = { Text("例：来週のどこかでリハビリセンターに行く。") },
-                        modifier = Modifier.height(screenHeight * 0.55f)
+                        modifier = Modifier.height(screenHeight * 0.45f),
                     )
                     Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
                     OutlinedButton(
