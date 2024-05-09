@@ -1,4 +1,4 @@
-package com.example.kneediary.ui.screens.record_screen
+package com.example.kneediary.ui.screens.record_screen.record_note_screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,12 +27,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,35 +43,63 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.kneediary.R
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecordNoteScreen(
-    navController: NavHostController,
+    back: () -> Unit,
+    viewModel: RecordNoteScreenViewModel,
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    RecordNoteScreen(
+        uiState = uiState,
+        create = { title, description, date, time ->
+            viewModel.create(title, description, date, time) },
+        back = back,
+        moveToIdle = {
+            viewModel.moveToIdle()
+        },
+    )
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun RecordNoteScreen(
+    uiState: RecordNoteScreenViewModel.UiState,
+    create: (String, String, Long, Long) -> Unit,
+    back: () -> Unit,
+    moveToIdle: () -> Unit,
+){
     var title by remember { mutableStateOf("") }
+
     var description by remember { mutableStateOf("") }
 
     var showDateDialog by remember { mutableStateOf(false) }
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
-    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    val date: Long = selectedDate.atStartOfDay(ZoneId.of("Asia/Tokyo")).toInstant().toEpochMilli()
+
     var showTimeDialog by remember { mutableStateOf(false) }
     val timeFormatter = DateTimeFormatter.ofPattern("HH時mm分")
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
+    val time: Long = selectedTime.toNanoOfDay() / 1_000_000
 
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -88,7 +119,7 @@ fun RecordNoteScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            navController.popBackStack()
+                            back()
                         }) {
                         Icon(Icons.Rounded.Close, contentDescription = "閉じる")
                     }
@@ -97,7 +128,9 @@ fun RecordNoteScreen(
         },
         content = { paddingValues ->
             Box(
-                modifier = Modifier.fillMaxWidth().padding(start = 60.dp, end = 60.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 60.dp, end = 60.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Column(
@@ -265,9 +298,7 @@ fun RecordNoteScreen(
                     Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
                     OutlinedButton(
                         onClick = {
-                            navController.navigateUp()
-                            //メモを保存する関数をViewModelに作成
-                            //何かテキストフィールドに入力されていないと保存できないようにする。
+                                  create(title,description,date,time)
                         },
                         colors = ButtonDefaults.outlinedButtonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
@@ -278,12 +309,36 @@ fun RecordNoteScreen(
                     }
                 }
             }
-        })
+        }
+    )
+
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is RecordNoteScreenViewModel.UiState.CreateError -> TODO()
+            RecordNoteScreenViewModel.UiState.Idle -> {
+
+            }
+            RecordNoteScreenViewModel.UiState.InputError -> {
+
+                snackbarHostState.showSnackbar(
+                    message = context.getString(R.string.title_empty),
+                )
+                moveToIdle()
+            }
+            RecordNoteScreenViewModel.UiState.Success -> {
+                back()
+            }
+        }
+    }
 }
 
 @Preview
 @Composable
 fun RecordNoteScreenPreview() {
-    val navController = rememberNavController()
-    RecordNoteScreen(navController = navController)
+    RecordNoteScreen(
+        uiState= RecordNoteScreenViewModel.UiState.Idle,
+        back = {},
+        create = { _, _, _, _ -> },
+        moveToIdle = {},
+    )
 }
