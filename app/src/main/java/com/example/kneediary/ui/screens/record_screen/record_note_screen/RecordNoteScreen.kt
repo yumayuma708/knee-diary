@@ -1,4 +1,4 @@
-package com.example.kneediary.ui.screens.record_screen
+package com.example.kneediary.ui.screens.record_screen.record_note_screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +33,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,20 +53,39 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecordNoteScreen(
-    navController: NavHostController,
+    back: () -> Unit,
+    viewModel: RecordNoteScreenViewModel,
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    RecordNoteScreen(
+        uiState = uiState,
+        create = { title, description, date, time ->
+            viewModel.create(title, description, date, time) },
+        back = { /*TODO*/ },
+    )
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun RecordNoteScreen(
+    uiState: RecordNoteScreenViewModel.UiState,
+    create: (String, String, Long, Long) -> Unit,
+    back: () -> Unit,
+){
     var title by remember { mutableStateOf("") }
+
     var description by remember { mutableStateOf("") }
 
     var showDateDialog by remember { mutableStateOf(false) }
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
-    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    val date: Long = selectedDate.atStartOfDay(ZoneId.of("Asia/Tokyo")).toInstant().toEpochMilli()
+
     var showTimeDialog by remember { mutableStateOf(false) }
     val timeFormatter = DateTimeFormatter.ofPattern("HH時mm分")
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
+    val time: Long = selectedTime.toNanoOfDay() / 1_000_000
 
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
@@ -88,7 +108,7 @@ fun RecordNoteScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            navController.popBackStack()
+                            back()
                         }) {
                         Icon(Icons.Rounded.Close, contentDescription = "閉じる")
                     }
@@ -97,7 +117,9 @@ fun RecordNoteScreen(
         },
         content = { paddingValues ->
             Box(
-                modifier = Modifier.fillMaxWidth().padding(start = 60.dp, end = 60.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 60.dp, end = 60.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Column(
@@ -265,9 +287,7 @@ fun RecordNoteScreen(
                     Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
                     OutlinedButton(
                         onClick = {
-                            navController.navigateUp()
-                            //メモを保存する関数をViewModelに作成
-                            //何かテキストフィールドに入力されていないと保存できないようにする。
+                                  create(title,description,date,time)
                         },
                         colors = ButtonDefaults.outlinedButtonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
@@ -284,6 +304,9 @@ fun RecordNoteScreen(
 @Preview
 @Composable
 fun RecordNoteScreenPreview() {
-    val navController = rememberNavController()
-    RecordNoteScreen(navController = navController)
+    RecordNoteScreen(
+        uiState= RecordNoteScreenViewModel.UiState.Idle,
+        back = {},
+        create = { _, _, _, _ -> },
+    )
 }

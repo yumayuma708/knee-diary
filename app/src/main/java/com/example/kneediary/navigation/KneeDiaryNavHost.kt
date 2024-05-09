@@ -1,9 +1,7 @@
 package com.example.kneediary.navigation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -17,7 +15,8 @@ import com.example.kneediary.ui.screens.navigated_screen.home_screen.edit_screen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.edit_screen.EditKneeRecordViewModel
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.note_screen.NoteScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.weekly_screen.WeeklyScreen
-import com.example.kneediary.ui.screens.record_screen.RecordNoteScreen
+import com.example.kneediary.ui.screens.record_screen.record_note_screen.RecordNoteScreen
+import com.example.kneediary.ui.screens.record_screen.record_note_screen.RecordNoteScreenViewModel
 import com.example.kneediary.ui.screens.record_screen.record_screen.RecordScreen
 import com.example.kneediary.ui.screens.record_screen.record_screen.RecordScreenViewModel
 import com.example.kneediary.ui.screens.start_screen.StartScreen
@@ -60,12 +59,16 @@ fun KneeDiaryNavHost(
                 viewModel = viewModel,
                 back = {
                     navController.popBackStack()
-                }
+                },
             )
         }
         composable(route = Nav.RecordNoteScreen.name){
+            val viewModel: RecordNoteScreenViewModel = hiltViewModel()
             RecordNoteScreen(
-                navController = navController
+                viewModel = viewModel,
+                back = {
+                    navController.popBackStack()
+                },
             )
         }
         composable("/edit/{kneeRecordId}",
