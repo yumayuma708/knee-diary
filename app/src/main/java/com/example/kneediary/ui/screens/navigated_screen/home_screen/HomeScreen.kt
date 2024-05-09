@@ -32,6 +32,7 @@ import com.example.kneediary.navigation.Nav
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen.DateScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen.DateScreenViewModel
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.note_screen.NoteScreen
+import com.example.kneediary.ui.screens.navigated_screen.home_screen.note_screen.NoteScreenViewModel
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.weekly_screen.WeeklyScreen
 import com.repository.KneeRecordRepository
 import com.repository.LocalKneeRecordRepository
@@ -100,7 +101,16 @@ fun HomeScreen(
                         )
                     }
                     1 -> WeeklyScreen(modifier = Modifier.padding(paddingValues))
-                    2 -> NoteScreen(modifier = Modifier.padding(paddingValues))
+                    2 -> {
+                        val viewModel: NoteScreenViewModel = hiltViewModel()
+                        NoteScreen(
+                            modifier = Modifier.padding(paddingValues),
+                            viewModel = viewModel,
+                            toEdit = {kneeNoteId ->
+                                navController.navigate("/edit/$kneeNoteId")
+                            }
+                        )
+                    }
                     else -> Text("未定義の画面です", modifier = Modifier.padding(paddingValues))
                 }
         },

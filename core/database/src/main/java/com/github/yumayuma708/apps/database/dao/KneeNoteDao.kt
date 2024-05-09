@@ -11,6 +11,6 @@ interface KneeNoteDao {
     @Insert
     suspend fun create(kneeNote: KneeNoteEntity): Long
 
-    @Query("SELECT * FROM knee_record ORDER BY date DESC")
+    @Query("SELECT * FROM knee_note ORDER BY date DESC")
     fun getAll(): Flow<List<KneeNoteEntity>>
 }

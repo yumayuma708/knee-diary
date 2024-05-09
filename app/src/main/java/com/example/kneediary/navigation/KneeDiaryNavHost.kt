@@ -14,6 +14,7 @@ import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.edit_screen.EditKneeRecordScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.edit_screen.EditKneeRecordViewModel
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.note_screen.NoteScreen
+import com.example.kneediary.ui.screens.navigated_screen.home_screen.note_screen.NoteScreenViewModel
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.weekly_screen.WeeklyScreen
 import com.example.kneediary.ui.screens.record_screen.record_note_screen.RecordNoteScreen
 import com.example.kneediary.ui.screens.record_screen.record_note_screen.RecordNoteScreenViewModel
@@ -48,7 +49,13 @@ fun KneeDiaryNavHost(
             )
         }
         composable(route = Nav.NoteScreen.name) {
-            NoteScreen()
+            val viewModel: NoteScreenViewModel = hiltViewModel()
+            NoteScreen(
+                viewModel = viewModel,
+                toEdit = {kneeNoteId ->
+                    navController.navigate("/edit/$kneeNoteId")
+                },
+            )
         }
         composable(route = Nav.WeeklyScreen.name) {
             WeeklyScreen()
