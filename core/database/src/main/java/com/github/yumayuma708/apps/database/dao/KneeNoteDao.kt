@@ -16,7 +16,7 @@ interface KneeNoteDao {
     fun getAll(): Flow<List<KneeNoteEntity>>
 
     @Query("SELECT * FROM knee_note WHERE id = :id LIMIT 1")
-    abstract fun getById(id: Long): KneeNoteEntity?
+    suspend fun getById(id: Long): KneeNoteEntity?
 
     @Update
     suspend fun update(entity: KneeNoteEntity)
