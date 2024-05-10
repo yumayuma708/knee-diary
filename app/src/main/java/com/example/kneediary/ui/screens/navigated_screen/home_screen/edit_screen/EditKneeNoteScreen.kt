@@ -95,9 +95,7 @@ private fun EditKneeNoteScreen(
     var description by remember { mutableStateOf("") }
 
     var showDateDialog by remember { mutableStateOf(false) }
-    //dateは、kneenoteから受け取ったLong型の変数
     var date by remember { mutableStateOf(System.currentTimeMillis()) }
-    //selectedDateは、DatePickerから受け取ったLocalDate!型の変数
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var datePicked by remember { mutableStateOf(false) }
     LaunchedEffect(uiState) {
@@ -371,7 +369,7 @@ fun EditKneeNoteForm(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-
+            Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
             Row(
                 modifier = Modifier
                     .clickable(

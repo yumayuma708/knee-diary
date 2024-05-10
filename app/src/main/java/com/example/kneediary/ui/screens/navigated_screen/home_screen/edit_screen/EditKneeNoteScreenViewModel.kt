@@ -16,7 +16,7 @@ import javax.inject.Inject
 class EditKneeNoteScreenViewModel @Inject constructor(
     private val repository: KneeNoteRepository,
     savedStateHandle: SavedStateHandle,
-) : ViewModel(){
+) : ViewModel() {
     private val id: Long = savedStateHandle.get<Long>("kneeNoteId")
         ?: throw IllegalArgumentException("id is required")
 
@@ -60,6 +60,14 @@ class EditKneeNoteScreenViewModel @Inject constructor(
     fun moveToIdle() {
         val currentState = _uiState.value
         if (currentState is UiState.LoadSuccess) {
+            _uiState.value = UiState.Idle(currentState.kneeNote)
+        } else if (currentState is UiState.InputError) {
+            _uiState.value = UiState.Idle(currentState.kneeNote)
+        } else if (currentState is UiState.UpdateError) {
+            _uiState.value = UiState.Idle(currentState.kneeNote)
+        } else if (currentState is UiState.ConfirmDelete) {
+            _uiState.value = UiState.Idle(currentState.kneeNote)
+        } else if (currentState is UiState.DeleteError) {
             _uiState.value = UiState.Idle(currentState.kneeNote)
         }
     }
