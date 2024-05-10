@@ -133,6 +133,7 @@ private fun EditKneeRecordScreen(
         3 -> "snowy"
         else -> ""
     }
+
     var showDateDialog by remember { mutableStateOf(false) }
     //dateは、kneeRecordから受け取ったLong型の変数
     var date by remember { mutableStateOf(System.currentTimeMillis()) }
@@ -214,7 +215,9 @@ private fun EditKneeRecordScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
         when (uiState) {
-            EditKneeRecordViewModel.UiState.Initial, EditKneeRecordViewModel.UiState.Loading, is EditKneeRecordViewModel.UiState.LoadSuccess -> {
+            EditKneeRecordViewModel.UiState.Initial,
+            EditKneeRecordViewModel.UiState.Loading,
+            is EditKneeRecordViewModel.UiState.LoadSuccess -> {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier

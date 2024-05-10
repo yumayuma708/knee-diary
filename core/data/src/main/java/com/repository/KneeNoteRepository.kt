@@ -12,4 +12,6 @@ interface KneeNoteRepository {
     ): KneeNote
 
     fun getAll(): Flow<List<KneeNote>>
+    suspend fun getById(id: Long): KneeNote?
+    suspend fun update(copy: KneeNote)
 }

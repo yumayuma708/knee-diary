@@ -44,6 +44,22 @@ class LocalKneeNoteRepository @Inject constructor(
             items.map { item -> item.toModel() }
         }
     }
+
+    override suspend fun update(kneeNote: KneeNote) {
+        val entity = KneeNoteEntity(
+            id = kneeNote.id,
+            title = kneeNote.title,
+            description = kneeNote.description,
+            date = kneeNote.date,
+            time = kneeNote.time,
+            createdAt = kneeNote.createdAt,
+            updatedAt = System.currentTimeMillis(),
+        )
+        kneeNoteDao.update(entity)
+    }
+    override suspend fun getById(id: Long): KneeNote? {
+        return kneeNoteDao.getById(id)?.toModel()
+    }
 }
 
 private fun KneeNoteEntity.toModel(): KneeNote {

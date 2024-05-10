@@ -1,5 +1,6 @@
 package com.example.kneediary.ui.screens.navigated_screen.home_screen.note_screen
 
+import android.util.Log
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
@@ -41,7 +42,9 @@ private fun NoteScreen(
                 KneeNoteListItem(
                     kneeNote = kneeNoteList[it],
                     onClick = {
+                        Log.d("メッセージ", "onClickが呼び出されました")
                         toEdit(kneeNoteList[it].id)
+                        Log.d("id", kneeNoteList[it].id.toString())
                     },
                 )
             }

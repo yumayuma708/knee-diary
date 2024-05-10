@@ -96,7 +96,7 @@ fun HomeScreen(
                         modifier = Modifier.padding(paddingValues),
                         viewModel = viewModel,
                             toEdit = {kneeRecordId ->
-                                navController.navigate("/edit/$kneeRecordId")
+                                navController.navigate("/editRecord/$kneeRecordId")
                             }
                         )
                     }
@@ -107,7 +107,7 @@ fun HomeScreen(
                             modifier = Modifier.padding(paddingValues),
                             viewModel = viewModel,
                             toEdit = {kneeNoteId ->
-                                navController.navigate("/edit/$kneeNoteId")
+                                navController.navigate("/editNote/$kneeNoteId")
                             }
                         )
                     }
