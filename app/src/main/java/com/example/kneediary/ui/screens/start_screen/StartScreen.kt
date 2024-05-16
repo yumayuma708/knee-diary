@@ -1,5 +1,11 @@
 package com.example.kneediary.ui.screens.start_screen
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,14 +32,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationChannelCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.example.compose.KneeDiaryTheme
+import com.example.kneediary.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +53,16 @@ fun StartScreen(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.primary,
     onNavigateToHomeScreen: () -> Unit,
-    ) {
+) {
+
+    val context = LocalContext.current
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                showNotification(context)
+            }
+        }
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -77,7 +98,7 @@ fun StartScreen(
                 label = { Text("パスワード") },
                 visualTransformation = PasswordVisualTransformation(),
                 leadingIcon = {
-                    Icon(Icons.Default.VpnKey , contentDescription = "パスワード")
+                    Icon(Icons.Default.VpnKey, contentDescription = "パスワード")
                 }
             )
             Spacer(modifier = Modifier.height(30.dp)) // TextFieldと次のコンテンツ間のスペース
@@ -132,11 +153,19 @@ fun StartScreen(
             ClickableText(
                 text = annotatedString,
                 onClick = { offset ->
-                    annotatedString.getStringAnnotations(tag = "TERMS", start = offset, end = offset)
+                    annotatedString.getStringAnnotations(
+                        tag = "TERMS",
+                        start = offset,
+                        end = offset
+                    )
                         .firstOrNull()?.let {
                             // ここで利用規約のリンク処理を行う
                         }
-                    annotatedString.getStringAnnotations(tag = "PRIVACY", start = offset, end = offset)
+                    annotatedString.getStringAnnotations(
+                        tag = "PRIVACY",
+                        start = offset,
+                        end = offset
+                    )
                         .firstOrNull()?.let {
                             // ここでプライバシーポリシーのリンク処理を行う
                         }
@@ -153,13 +182,41 @@ fun StartScreen(
             Spacer(modifier = Modifier.height(30.dp))
             Button(
                 onClick = {
-
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        if (ActivityCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.POST_NOTIFICATIONS
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            return@Button
+                        }
+                    }
+                    showNotification(context)
                 }
             ) {
                 Text("通知を表示")
             }
         }
     }
+}
+
+@SuppressLint("MissingPermission")
+private fun showNotification(context: android.content.Context) {
+    val manager = NotificationManagerCompat.from(context)
+    val channel = NotificationChannelCompat.Builder(
+        "channel_id",
+        NotificationManagerCompat.IMPORTANCE_HIGH
+    )
+        .setName("ひざの痛みを記録しましょう！")
+        .build()
+    manager.createNotificationChannel(channel)
+    val notification = NotificationCompat.Builder(context, "channel_id")
+        .setContentTitle("ひざの痛みを記録しましょう！")
+        .setContentText("毎日のひざの状態を記録しましょう！")
+        .setSmallIcon(R.drawable.ic_launcher_foreground)
+        .build()
+    manager.notify(1, notification)
 }
 
 @Preview(showBackground = true)
