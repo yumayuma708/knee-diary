@@ -11,6 +11,8 @@ import androidx.navigation.navArgument
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.HomeScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen.DateScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen.DateScreenViewModel
+import com.example.kneediary.ui.screens.navigated_screen.home_screen.edit_screen.EditKneeNoteScreen
+import com.example.kneediary.ui.screens.navigated_screen.home_screen.edit_screen.EditKneeNoteScreenViewModel
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.edit_screen.EditKneeRecordScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.edit_screen.EditKneeRecordViewModel
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.note_screen.NoteScreen
@@ -44,7 +46,7 @@ fun KneeDiaryNavHost(
             DateScreen(
                 viewModel = viewModel,
                 toEdit = {kneeRecordId ->
-                    navController.navigate("/edit/$kneeRecordId")
+                    navController.navigate("/editRecord/$kneeRecordId")
                 },
             )
         }
@@ -53,7 +55,7 @@ fun KneeDiaryNavHost(
             NoteScreen(
                 viewModel = viewModel,
                 toEdit = {kneeNoteId ->
-                    navController.navigate("/edit/$kneeNoteId")
+                    navController.navigate("/editNote/$kneeNoteId")
                 },
             )
         }
@@ -78,7 +80,7 @@ fun KneeDiaryNavHost(
                 },
             )
         }
-        composable("/edit/{kneeRecordId}",
+        composable("/editRecord/{kneeRecordId}",
             arguments = listOf(
                 navArgument("kneeRecordId"){
                     type = NavType.LongType
@@ -87,6 +89,21 @@ fun KneeDiaryNavHost(
             ){
             val viewModel: EditKneeRecordViewModel = hiltViewModel()
             EditKneeRecordScreen(
+                viewModel = viewModel,
+                back = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        composable("/editNote/{kneeNoteId}",
+            arguments = listOf(
+                navArgument("kneeNoteId"){
+                    type = NavType.LongType
+                }
+            )
+        ){
+            val viewModel: EditKneeNoteScreenViewModel = hiltViewModel()
+            EditKneeNoteScreen(
                 viewModel = viewModel,
                 back = {
                     navController.popBackStack()
