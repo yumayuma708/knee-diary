@@ -150,6 +150,14 @@ fun StartScreen(
             ) {
                 Text("ホーム画面へ")
             }
+            Spacer(modifier = Modifier.height(30.dp))
+            Button(
+                onClick = {
+
+                }
+            ) {
+                Text("通知を表示")
+            }
         }
     }
 }
