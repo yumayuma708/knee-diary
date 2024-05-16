@@ -24,7 +24,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.github.yumayuma708.apps.model.KneeNote
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 
 @Composable

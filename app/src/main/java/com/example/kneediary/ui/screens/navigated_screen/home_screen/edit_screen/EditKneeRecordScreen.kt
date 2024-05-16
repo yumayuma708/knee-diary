@@ -172,7 +172,7 @@ private fun EditKneeRecordScreen(
         showTimeDialog = false
         timePicked = true
         time =
-            selectedTime.atDate(LocalDate.now()).atZone(ZoneId.of("UTC")).toInstant().toEpochMilli()
+            selectedTime.atDate(LocalDate.now()).atZone(ZoneId.of("Asia/Tokyo")).toInstant().toEpochMilli()
     }
     val changeTimeDialogState: () -> Unit = {
         showTimeDialog = !showTimeDialog
