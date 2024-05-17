@@ -2,6 +2,8 @@ package com.example.kneediary.ui.screens.start_screen
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.PendingIntent
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -45,6 +47,7 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.compose.KneeDiaryTheme
+import com.example.kneediary.MainActivity
 import com.example.kneediary.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -211,9 +214,16 @@ private fun showNotification(context: android.content.Context) {
         .setName("ひざの痛みを記録しましょう！")
         .build()
     manager.createNotificationChannel(channel)
+    val intent = Intent(context, MainActivity::class.java)
+    val pendingIntent = PendingIntent.getActivity(
+        context,
+        0,
+        intent,
+        PendingIntent.FLAG_IMMUTABLE)
     val notification = NotificationCompat.Builder(context, "channel_id")
         .setContentTitle("ひざの痛みを記録しましょう！")
         .setContentText("毎日のひざの状態を記録しましょう！")
+        .setContentIntent(pendingIntent)
         .setSmallIcon(R.drawable.ic_launcher_foreground)
         .build()
     manager.notify(1, notification)
