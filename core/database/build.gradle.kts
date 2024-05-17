@@ -20,7 +20,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -31,9 +31,16 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    lint {
+        sarifOutput = File(project.buildDir, "reports/android-lint/lintResults.sarif")
+        textOutput = File(project.buildDir, "reports/android-lint/lintResults.txt")
+        htmlOutput = File(project.buildDir, "reports/android-lint/lintResults.html")
+        xmlReport = false
+    }
 }
 
-ksp{
+ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
 
@@ -49,7 +56,7 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
-    //4/15に追加
+    // 4/15に追加
     implementation("com.google.devtools.ksp:symbol-processing-api:1.9.23-1.0.20")
     ksp(libs.room.compiler)
     implementation(libs.room.runtime)

@@ -20,7 +20,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -31,12 +31,18 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    lint {
+        sarifOutput = File(project.buildDir, "reports/android-lint/lintResults.sarif")
+        textOutput = File(project.buildDir, "reports/android-lint/lintResults.txt")
+        htmlOutput = File(project.buildDir, "reports/android-lint/lintResults.html")
+        xmlReport = false
+    }
 }
 
 dependencies {
     implementation(project(":core:database"))
     implementation(project(":core:model"))
-
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
