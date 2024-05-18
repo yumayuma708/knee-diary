@@ -20,3 +20,15 @@ plugins {
     id("androidx.room") version "2.6.1" apply false
     alias(libs.plugins.ksp) apply false
 }
+
+subprojects {
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = "1.8" // もしくは "11" に変更
+        }
+    }
+}
+
+tasks.register("clean", Delete::class) {
+    delete(rootProject.buildDir)
+}
