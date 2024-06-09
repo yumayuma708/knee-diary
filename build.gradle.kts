@@ -24,7 +24,7 @@ plugins {
 subprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "1.8" // もしくは "11" に変更
+            jvmTarget = "17"
         }
     }
 }
