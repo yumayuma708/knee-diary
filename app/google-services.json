@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "562421348158",
+    "project_id": "knee-diary",
+    "storage_bucket": "knee-diary.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:562421348158:android:2ec8d94ee6cd841fec1e6f",
+        "android_client_info": {
+          "package_name": "com.example.kneediary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "562421348158-3tmrk30nofsmkm9d7g59mq99kbka53jt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTYWtXd55XdWbjw_bylRsqNR8FKaZU_5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "562421348158-3tmrk30nofsmkm9d7g59mq99kbka53jt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

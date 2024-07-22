@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.ksp)
     id("dagger.hilt.android.plugin")
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -105,5 +106,11 @@ dependencies {
 
     lintChecks("com.slack.lint.compose:compose-lint-checks:1.3.1")
 
-//    implementation("com.google.dagger:dagger-producers:2.51.1")
+    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    implementation("com.google.firebase:firebase-firestore")
+
+    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
 }
