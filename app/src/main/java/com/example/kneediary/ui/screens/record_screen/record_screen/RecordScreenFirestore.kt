@@ -23,6 +23,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -66,7 +67,7 @@ import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 @Composable
-fun RecordScreen(
+fun RecordScreenFirestore(
     back: () -> Unit,
     viewModel: RecordScreenViewModel,
 ) {
@@ -76,7 +77,7 @@ fun RecordScreen(
     // ここでcreateを定義することにより、RecordScreenのUI部分のonClick処理でviewModel.createというように呼び出す必要がない。
     // これにより、RecordScreenのUI部分は、viewModelのことを知らなくても良い。
     // これを、カプセル化という。
-    RecordScreen(
+    RecordFirestoreScreen(
         // 左辺のuiStateに対して、CreateParameter 'uiState'を行い、
         // 自分で作ったViewModelのuiStateを一番上に移動させる。
         // こうすることで、UiStateが変化したタイミングで再コンポーズが行われる。
@@ -94,7 +95,7 @@ fun RecordScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 // private funで、引数が異なるRecordScreen()を作成
-private fun RecordScreen(
+private fun RecordScreenFirestore(
     uiState: RecordScreenViewModel.UiState,
     create: (Long, Long, Boolean, Float, String, String) -> Unit,
     moveToIdle: () -> Unit,
@@ -278,7 +279,7 @@ private fun RecordScreen(
                             if (showDateDialog) {
                                 val datePickerState =
                                     rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
-                                AlertDialog(
+                                DatePickerDialog(
                                     onDismissRequest = {
                                         showDateDialog = false
                                     },
@@ -456,7 +457,7 @@ private fun RecordScreen(
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
-    RecordScreen(
+    RecordScreenFirestore(
         uiState = RecordScreenViewModel.UiState.Idle,
         back = {},
         create = { _, _, _, _, _, _ -> },
