@@ -3,13 +3,13 @@ package com.example.kneediary.ui.screens.record_screen.record_note_screen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Close
@@ -49,8 +49,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.kneediary.R
 import java.time.Instant
 import java.time.LocalDate
@@ -67,13 +65,15 @@ fun RecordNoteScreen(
     RecordNoteScreen(
         uiState = uiState,
         create = { title, description, date, time ->
-            viewModel.create(title, description, date, time) },
+            viewModel.create(title, description, date, time)
+        },
         back = back,
         moveToIdle = {
             viewModel.moveToIdle()
         },
     )
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RecordNoteScreen(
@@ -81,7 +81,7 @@ private fun RecordNoteScreen(
     create: (String, String, Long, Long) -> Unit,
     back: () -> Unit,
     moveToIdle: () -> Unit,
-){
+) {
     var title by remember { mutableStateOf("") }
 
     var description by remember { mutableStateOf("") }
@@ -110,9 +110,10 @@ private fun RecordNoteScreen(
                         Box(modifier = Modifier.size(width = 24.dp, height = 24.dp)) {}
                         Text(
                             "メモを入力します",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentWidth(Alignment.CenterHorizontally),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentWidth(Alignment.CenterHorizontally),
                             style = MaterialTheme.typography.titleLarge,
                         )
                     }
@@ -121,197 +122,212 @@ private fun RecordNoteScreen(
                     IconButton(
                         onClick = {
                             back()
-                        }) {
+                        },
+                    ) {
                         Icon(Icons.Rounded.Close, contentDescription = "閉じる")
                     }
-                }
+                },
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         content = { paddingValues ->
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 60.dp, end = 60.dp),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = 60.dp, end = 60.dp),
+                contentAlignment = Alignment.Center,
             ) {
-                Column(
+                LazyColumn(
                     modifier = Modifier.padding(paddingValues),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
-                    Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
-                    Row(
-                        modifier = Modifier
-                            .clickable(
-                                onClick = { showDateDialog = true }
+                    item {
+                        Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
+                        Row(
+                            modifier =
+                                Modifier
+                                    .clickable(
+                                        onClick = { showDateDialog = true },
+                                    )
+                                    .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Start,
+                        ) {
+                            val commonSize = Modifier.size(35.dp)
+                            Icon(
+                                imageVector = Icons.Rounded.Event,
+                                contentDescription = "カレンダー",
+                                modifier = commonSize,
                             )
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Start,
-                    ) {
-                        val commonSize = Modifier.size(35.dp)
-                        Icon(
-                            imageVector = Icons.Rounded.Event,
-                            contentDescription = "カレンダー",
-                            modifier = commonSize
+                            Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
+                            Text(
+                                selectedDate.format(dateFormatter),
+                                style = MaterialTheme.typography.titleMedium,
+                                maxLines = 1,
+                            )
+                            Icon(
+                                imageVector = Icons.Rounded.ArrowDropDown,
+                                contentDescription = "表示",
+                                modifier = commonSize,
+                            )
+                            if (showDateDialog) {
+                                val datePickerState =
+                                    rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
+                                AlertDialog(
+                                    onDismissRequest = {
+                                        showDateDialog = false
+                                    },
+                                    text = {
+                                        DatePicker(
+                                            state = datePickerState,
+                                            modifier = Modifier.fillMaxWidth(),
+                                        )
+                                    },
+                                    confirmButton = {
+                                        Button(
+                                            onClick = {
+                                                showDateDialog = false
+                                                selectedDate =
+                                                    Instant.ofEpochMilli(
+                                                        datePickerState.selectedDateMillis
+                                                            ?: System.currentTimeMillis(),
+                                                    ).atZone(ZoneId.systemDefault()).toLocalDate()
+                                            },
+                                        ) {
+                                            Text("OK")
+                                        }
+                                    },
+                                    dismissButton = {
+                                        Button(
+                                            onClick = {
+                                                showDateDialog = false
+                                            },
+                                        ) {
+                                            Text("キャンセル")
+                                        }
+                                    },
+                                    properties =
+                                        DialogProperties(
+                                            usePlatformDefaultWidth = false,
+                                        ),
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth(0.99f)
+                                            .height(screenHeight * 0.75f),
+                                )
+                            }
+                        }
+                        Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
+                        Row(
+                            modifier =
+                                Modifier
+                                    .clickable(
+                                        onClick = { showTimeDialog = true },
+                                    )
+                                    .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Start,
+                        ) {
+                            val commonSize = Modifier.size(35.dp)
+                            Icon(
+                                imageVector = Icons.Rounded.Schedule,
+                                contentDescription = "カレンダー",
+                                modifier = commonSize,
+                            )
+                            Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
+                            Text(
+                                selectedTime.format(timeFormatter),
+                                style = MaterialTheme.typography.titleMedium,
+                                maxLines = 1,
+                            )
+                            Icon(
+                                imageVector = Icons.Rounded.ArrowDropDown,
+                                contentDescription = "表示",
+                                modifier = commonSize,
+                            )
+                            if (showTimeDialog) {
+                                val timePickerState = rememberTimePickerState()
+                                AlertDialog(
+                                    onDismissRequest = {
+                                        showTimeDialog = false
+                                    },
+                                    text = {
+                                        TimePicker(
+                                            state = timePickerState,
+                                            modifier = Modifier.fillMaxWidth(),
+                                        )
+                                    },
+                                    confirmButton = {
+                                        Button(
+                                            onClick = {
+                                                showTimeDialog = false
+                                                selectedTime =
+                                                    LocalTime.of(
+                                                        timePickerState.hour,
+                                                        timePickerState.minute,
+                                                    )
+                                            },
+                                        ) {
+                                            Text("OK")
+                                        }
+                                    },
+                                    dismissButton = {
+                                        Button(
+                                            onClick = {
+                                                showTimeDialog = false
+                                            },
+                                        ) {
+                                            Text("キャンセル")
+                                        }
+                                    },
+                                    properties =
+                                        DialogProperties(
+                                            usePlatformDefaultWidth = false,
+                                        ),
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth(0.99f)
+                                            .height(screenHeight * 0.75f),
+                                )
+                            }
+                        }
+                        Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
+                        OutlinedTextField(
+                            value = title,
+                            onValueChange = { title = it },
+                            label = { Text("タイトル") },
+                            modifier = Modifier.height(screenHeight * 0.08f),
+                            maxLines = 1,
+                        )
+                        Box(modifier = Modifier.size(width = 20.dp, height = 10.dp))
+                        OutlinedTextField(
+                            value = description,
+                            onValueChange = { description = it },
+                            label = { Text("メモ") },
+                            modifier = Modifier.height(screenHeight * 0.45f),
                         )
                         Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
-                        Text(
-                            selectedDate.format(dateFormatter),
-                            style = MaterialTheme.typography.titleMedium,
-                            maxLines = 1
-                        )
-                        Icon(
-                            imageVector = Icons.Rounded.ArrowDropDown,
-                            contentDescription = "表示",
-                            modifier = commonSize
-                        )
-                        if (showDateDialog) {
-                            val datePickerState =
-                                rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
-                            AlertDialog(
-                                onDismissRequest = {
-                                    showDateDialog = false
-                                },
-                                text = {
-                                    DatePicker(
-                                        state = datePickerState,
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
-                                },
-                                confirmButton = {
-                                    Button(
-                                        onClick = {
-                                            showDateDialog = false
-                                            selectedDate = Instant.ofEpochMilli(
-                                                datePickerState.selectedDateMillis
-                                                    ?: System.currentTimeMillis()
-                                            ).atZone(ZoneId.systemDefault()).toLocalDate()
-                                        }
-                                    ) {
-                                        Text("OK")
-                                    }
-                                },
-                                dismissButton = {
-                                    Button(
-                                        onClick = {
-                                            showDateDialog = false
-
-                                        }
-                                    ) {
-                                        Text("キャンセル")
-                                    }
-                                },
-                                properties = DialogProperties(
-                                    usePlatformDefaultWidth = false
+                        OutlinedButton(
+                            onClick = {
+                                create(title, description, date, time)
+                            },
+                            colors =
+                                ButtonDefaults.outlinedButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary,
                                 ),
-                                modifier = Modifier
-                                    .fillMaxWidth(0.99f)
-                                    .height(screenHeight * 0.75f)
+                        ) {
+                            Text(
+                                "保存",
+                                style = TextStyle(color = MaterialTheme.colorScheme.onPrimary),
                             )
                         }
-                    }
-                    Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
-                    Row(
-                        modifier = Modifier
-                            .clickable(
-                                onClick = { showTimeDialog = true }
-                            )
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Start,
-                    ) {
-                        val commonSize = Modifier.size(35.dp)
-                        Icon(
-                            imageVector = Icons.Rounded.Schedule,
-                            contentDescription = "カレンダー",
-                            modifier = commonSize
-                        )
-                        Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
-                        Text(
-                            selectedTime.format(timeFormatter),
-                            style = MaterialTheme.typography.titleMedium,
-                            maxLines = 1
-                        )
-                        Icon(
-                            imageVector = Icons.Rounded.ArrowDropDown,
-                            contentDescription = "表示",
-                            modifier = commonSize
-                        )
-                        if (showTimeDialog) {
-                            val timePickerState = rememberTimePickerState()
-                            AlertDialog(
-                                onDismissRequest = {
-                                    showTimeDialog = false
-                                },
-                                text = {
-                                    TimePicker(
-                                        state = timePickerState,
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
-                                },
-                                confirmButton = {
-                                    Button(
-                                        onClick = {
-                                            showTimeDialog = false
-                                            selectedTime = LocalTime.of(
-                                                timePickerState.hour,
-                                                timePickerState.minute
-                                            )
-                                        }
-                                    ) {
-                                        Text("OK")
-                                    }
-                                },
-                                dismissButton = {
-                                    Button(
-                                        onClick = {
-                                            showTimeDialog = false
-                                        }
-                                    ) {
-                                        Text("キャンセル")
-                                    }
-                                },
-                                properties = DialogProperties(
-                                    usePlatformDefaultWidth = false
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth(0.99f)
-                                    .height(screenHeight * 0.75f)
-                            )
-                        }
-                    }
-                    Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
-                    OutlinedTextField(
-                        value = title,
-                        onValueChange = { title = it },
-                        label = { Text("タイトル") },
-                        modifier = Modifier.height(screenHeight * 0.08f),
-                        maxLines = 1,
-                    )
-                    Box(modifier = Modifier.size(width = 20.dp, height = 10.dp))
-                    OutlinedTextField(
-                        value = description,
-                        onValueChange = { description = it },
-                        label = { Text("メモ") },
-                        modifier = Modifier.height(screenHeight * 0.45f),
-                    )
-                    Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
-                    OutlinedButton(
-                        onClick = {
-                                  create(title,description,date,time)
-                        },
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        )
-                    ) {
-                        Text("保存", style = TextStyle(color = MaterialTheme.colorScheme.onPrimary))
                     }
                 }
             }
-        }
+        },
     )
 
     LaunchedEffect(uiState) {
@@ -319,12 +335,14 @@ private fun RecordNoteScreen(
             is RecordNoteScreenViewModel.UiState.CreateError -> TODO()
             RecordNoteScreenViewModel.UiState.Idle -> {
             }
+
             RecordNoteScreenViewModel.UiState.InputError -> {
                 snackbarHostState.showSnackbar(
                     message = context.getString(R.string.title_empty),
                 )
                 moveToIdle()
             }
+
             RecordNoteScreenViewModel.UiState.Success -> {
                 back()
             }
@@ -332,11 +350,11 @@ private fun RecordNoteScreen(
     }
 }
 
-@Preview
 @Composable
+@Preview
 fun RecordNoteScreenPreview() {
     RecordNoteScreen(
-        uiState= RecordNoteScreenViewModel.UiState.Idle,
+        uiState = RecordNoteScreenViewModel.UiState.Idle,
         back = {},
         create = { _, _, _, _ -> },
         moveToIdle = {},
