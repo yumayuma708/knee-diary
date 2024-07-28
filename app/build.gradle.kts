@@ -106,4 +106,10 @@ dependencies {
     lintChecks("com.slack.lint.compose:compose-lint-checks:1.3.1")
 
 //    implementation("com.google.dagger:dagger-producers:2.51.1")
+
+    implementation("androidx.glance:glance-appwidget:1.1.0")
+
+    implementation("androidx.glance:glance-material3:1.1.0")
+
+    implementation("androidx.glance:glance-material:1.1.0")
 }
