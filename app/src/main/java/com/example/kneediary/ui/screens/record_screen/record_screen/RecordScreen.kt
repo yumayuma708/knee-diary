@@ -60,6 +60,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.kneediary.R
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -81,8 +82,8 @@ fun RecordScreen(
         // 自分で作ったViewModelのuiStateを一番上に移動させる。
         // こうすることで、UiStateが変化したタイミングで再コンポーズが行われる。
         uiState = uiState,
-        create = { date, time, isRight, pain, weather, note ->
-            viewModel.create(date, time, isRight, pain, weather, note)
+        create = { dateTime, isRight, pain, weather, note ->
+            viewModel.create(dateTime, isRight, pain, weather, note)
         },
         moveToIdle = {
             viewModel.moveToIdle()
@@ -96,7 +97,7 @@ fun RecordScreen(
 // private funで、引数が異なるRecordScreen()を作成
 private fun RecordScreen(
     uiState: RecordScreenViewModel.UiState,
-    create: (Long, Long, Boolean, Float, String, String) -> Unit,
+    create: (LocalDateTime, Boolean, Float, String, String) -> Unit,
     moveToIdle: () -> Unit,
     back: () -> Unit,
 ) {
@@ -130,7 +131,7 @@ private fun RecordScreen(
     var selectedDate by remember { mutableStateOf(LocalDate.now(ZoneId.of("Asia/Tokyo"))) }
     // dateをLong型で定義。このミリ秒は、選択された日付の午前0時からのミリ秒のこと。
     // これと、timeのミリ秒を足し合わせることで、日時を表す。
-    val date: Long = selectedDate.atStartOfDay(ZoneId.of("Asia/Tokyo")).toInstant().toEpochMilli()
+//    val date: Long = selectedDate.atStartOfDay(ZoneId.of("Asia/Tokyo")).toInstant().toEpochMilli()
     var showDateDialog by remember { mutableStateOf(false) }
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日")
 
@@ -138,9 +139,11 @@ private fun RecordScreen(
     // timeをLong型で定義
     // これは、選択された時間の午前0時からのミリ秒のこと。
     // これと、dateのミリ秒を足し合わせることで、日時を表す。
-    val time: Long = selectedTime.toNanoOfDay() / 1_000_000
+//    val time: Long = selectedTime.toNanoOfDay() / 1_000_000
     var showTimeDialog by remember { mutableStateOf(false) }
     val timeFormatter = DateTimeFormatter.ofPattern("HH時mm分")
+
+    val dateTime: LocalDateTime = LocalDateTime.of(selectedDate, selectedTime)
 
     var note by remember { mutableStateOf("") }
 
@@ -264,7 +267,7 @@ private fun RecordScreen(
                             // ////////////////////////////////////////////////////
                             Text(
                                 // LocalDate!型のselectedDateを〇〇年〇〇月〇〇日に変換
-                                selectedDate.format(dateFormatter),
+                                text = "$selectedDate",
                                 style = MaterialTheme.typography.titleMedium,
                                 maxLines = 1,
                             )
@@ -293,10 +296,11 @@ private fun RecordScreen(
                                             onClick = {
                                                 showDateDialog = false
                                                 selectedDate =
-                                                    Instant.ofEpochMilli(
-                                                        datePickerState.selectedDateMillis
-                                                            ?: System.currentTimeMillis(),
-                                                    ).atZone(ZoneId.of("Asia/Tokyo")).toLocalDate()
+                                                    datePickerState.selectedDateMillis?.let { millis ->
+                                                        Instant.ofEpochMilli(millis)
+                                                            .atZone(ZoneId.of("Asia/Tokyo"))
+                                                            .toLocalDate()
+                                                    }
                                             },
                                         ) {
                                             Text("OK")
@@ -407,7 +411,7 @@ private fun RecordScreen(
                         Box(modifier = Modifier.size(width = 20.dp, height = 30.dp))
                         OutlinedButton(
                             onClick = {
-                                create(date, time, isRight, pain, weather, note)
+                                create(dateTime, isRight, pain, weather, note)
                             },
                             colors =
                                 ButtonDefaults.outlinedButtonColors(
@@ -459,7 +463,7 @@ private fun Preview() {
     RecordScreen(
         uiState = RecordScreenViewModel.UiState.Idle,
         back = {},
-        create = { _, _, _, _, _, _ -> },
+        create = { _, _, _, _, _ -> },
         moveToIdle = {},
     )
 }

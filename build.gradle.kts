@@ -1,8 +1,15 @@
 buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
     dependencies {
         classpath(libs.hilt.android.gradle.plugin)
+        classpath("com.android.tools.build:gradle:7.0.4")
+        classpath("com.google.gms:google-services:4.3.3")
     }
 }
+
 ext {
     extra["compose_version"] = "1.2.0"
 }

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,8 +40,7 @@ class RecordScreenViewModel
         val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
         fun create(
-            date: Long,
-            time: Long,
+            dateTime: LocalDateTime,
             isRight: Boolean,
             pain: Float,
             weather: String,
@@ -55,7 +55,7 @@ class RecordScreenViewModel
             // create function が suspend fun で非同期関数なので、viewModelScope.launch{}で呼び出す
             viewModelScope.launch {
                 try {
-                    kneeRecordRepository.create(date, time, isRight, pain, weather, note)
+                    kneeRecordRepository.create(dateTime, isRight, pain, weather, note)
                     _uiState.value = UiState.Success
                 } catch (e: Exception) {
                     _uiState.value = UiState.CreateError(e)

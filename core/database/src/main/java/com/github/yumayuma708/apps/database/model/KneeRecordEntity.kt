@@ -2,6 +2,7 @@ package com.github.yumayuma708.apps.database.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.time.LocalDateTime
 
 @Entity(
     tableName = "knee_record",
@@ -9,12 +10,9 @@ import androidx.room.PrimaryKey
 data class KneeRecordEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
-    val date: Long,
-    val time: Long,
+    val dateTime: LocalDateTime,
     val isRight: Boolean,
     val pain: Float,
     val weather: String,
     val note: String,
-    val createdAt: Long,
-    val updatedAt: Long,
 )
