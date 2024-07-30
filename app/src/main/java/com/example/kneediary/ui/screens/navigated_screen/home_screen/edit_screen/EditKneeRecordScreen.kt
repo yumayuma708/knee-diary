@@ -84,8 +84,8 @@ fun EditKneeRecordScreen(
             viewModel.moveToIdle()
         },
         back = back,
-        update = { isRight, pain, weather, note, date, time ->
-            viewModel.update(isRight, pain, weather, note, date, time)
+        update = { isRight, pain, weather, note, dateTime ->
+            viewModel.update(isRight, pain, weather, note, dateTime)
         },
         showDeleteDialog = {
             viewModel.showDeleteDialog()
@@ -103,7 +103,7 @@ private fun EditKneeRecordScreen(
     load: () -> Unit,
     moveToIdle: () -> Unit,
     back: () -> Unit,
-    update: (Boolean, Float, String, String, Long, Long) -> Unit,
+    update: (Boolean, Float, String, String, LocalDateTime) -> Unit,
     showDeleteDialog: () -> Unit,
     delete: () -> Unit,
 ) {
@@ -203,7 +203,7 @@ private fun EditKneeRecordScreen(
             }, actions = {
                 if (uiState is EditKneeRecordViewModel.UiState.Idle) {
                     IconButton(onClick = {
-                        update(isRight, pain, weather, note, date, time)
+                        update(isRight, pain, weather, note, dateTime)
                     }) {
                         Icon(imageVector = Icons.Filled.Done, contentDescription = "保存")
                     }

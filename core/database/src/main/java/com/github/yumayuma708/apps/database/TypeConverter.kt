@@ -1,4 +1,4 @@
-package com.github.yumayuma708.apps.converters
+package com.github.yumayuma708.apps.database
 
 import androidx.room.TypeConverter
 import java.time.LocalDateTime
