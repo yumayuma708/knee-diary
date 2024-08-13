@@ -3,7 +3,7 @@ package com.github.yumayuma708.apps.model
 import java.time.LocalDateTime
 
 data class KneeRecord(
-    val id: Long,
+    val id: String,
     val dateTime: LocalDateTime,
     val isRight: Boolean,
     val pain: Float,

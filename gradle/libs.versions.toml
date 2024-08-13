@@ -31,9 +31,11 @@ androidxWork = "2.9.0"
 coil = "2.5.0"
 dependencyGuard = "0.4.3"
 firebaseBom = "32.4.0"
+firebaseBomVersion = "32.7.1"
 firebaseCrashlyticsPlugin = "2.9.9"
 firebasePerfPlugin = "1.4.2"
 gmsPlugin = "4.4.0"
+googleFirebaseBom = "33.1.2"
 googleOss = "17.0.1"
 googleOssPlugin = "0.10.6"
 hilt = "2.50"
@@ -64,7 +66,7 @@ recyclerview = "1.3.2"
 
 #追加
 navigation-compose = "2.7.2"
-hilt-android= "2.50"
+hilt-android = "2.50"
 hilt-navigation-compose = "1.0.0"
 hilt-complier = "1.0.0"
 room = "2.5.2"
@@ -131,10 +133,16 @@ coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-kt-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-kt-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
+firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-bom-v3271 = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
+firebase-bom-v3312 = { module = "com.google.firebase:firebase-bom", version.ref = "googleFirebaseBom" }
 firebase-cloud-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
+firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 firebase-performance = { group = "com.google.firebase", name = "firebase-perf-ktx" }
+google-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+google-firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 google-oss-licenses = { group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "googleOss" }
 google-oss-licenses-plugin = { group = "com.google.android.gms", name = "oss-licenses-plugin", version.ref = "googleOssPlugin" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }

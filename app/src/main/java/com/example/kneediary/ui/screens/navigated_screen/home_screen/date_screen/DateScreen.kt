@@ -15,7 +15,7 @@ import com.github.yumayuma708.apps.model.KneeRecord
 fun DateScreen(
     modifier: Modifier = Modifier,
     viewModel: DateScreenViewModel,
-    toEdit: (Long) -> Unit,
+    toEdit: (String) -> Unit,
 ) {
     val items = viewModel.items.collectAsState(initial = emptyList())
     DateScreen(
@@ -29,7 +29,7 @@ fun DateScreen(
 private fun DateScreen(
     modifier: Modifier = Modifier,
     kneeRecordList: List<KneeRecord>,
-    toEdit: (Long) -> Unit,
+    toEdit: (String) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier,

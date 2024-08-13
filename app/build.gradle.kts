@@ -10,6 +10,7 @@ plugins {
 android {
     namespace = "com.example.kneediary"
     compileSdk = 34
+    buildToolsVersion = "34.0.0"
 
     defaultConfig {
         applicationId = "com.example.kneediary"
@@ -106,11 +107,12 @@ dependencies {
 
     lintChecks("com.slack.lint.compose:compose-lint-checks:1.3.1")
 
-    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
-    implementation("com.google.firebase:firebase-firestore")
+    implementation(platform(libs.firebase.bom.v3271))
+    implementation(libs.firebase.firestore)
 
-    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-firestore")
+    implementation(platform(libs.firebase.bom.v3312))
+    implementation(libs.google.firebase.analytics)
+    implementation(libs.firebase.auth)
+    implementation(libs.google.firebase.firestore)
+
 }

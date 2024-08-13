@@ -34,8 +34,6 @@ import com.example.kneediary.ui.screens.navigated_screen.home_screen.date_screen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.note_screen.NoteScreen
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.note_screen.NoteScreenViewModel
 import com.example.kneediary.ui.screens.navigated_screen.home_screen.weekly_screen.WeeklyScreen
-import com.repository.KneeRecordRepository
-import com.repository.LocalKneeRecordRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,7 +75,7 @@ fun HomeScreen(
 
                 1 -> FloatingActionButton(
                     shape = MaterialTheme.shapes.extraLarge,
-                    onClick = {navController.navigate(Nav.RecordScreen.name) },
+                    onClick = { navController.navigate(Nav.RecordScreen.name) },
                     content = { Icon(Icons.Filled.Edit, contentDescription = "記録") }
                 )
 
@@ -89,30 +87,32 @@ fun HomeScreen(
             }
         },
         content = { paddingValues ->
-                when (selectedItem) {
-                    0 -> {
-                        val viewModel: DateScreenViewModel = hiltViewModel()
-                        DateScreen(
+            when (selectedItem) {
+                0 -> {
+                    val viewModel: DateScreenViewModel = hiltViewModel()
+                    DateScreen(
                         modifier = Modifier.padding(paddingValues),
                         viewModel = viewModel,
-                            toEdit = {kneeRecordId ->
-                                navController.navigate("/editRecord/$kneeRecordId")
-                            }
-                        )
-                    }
-                    1 -> WeeklyScreen(modifier = Modifier.padding(paddingValues))
-                    2 -> {
-                        val viewModel: NoteScreenViewModel = hiltViewModel()
-                        NoteScreen(
-                            modifier = Modifier.padding(paddingValues),
-                            viewModel = viewModel,
-                            toEdit = {kneeNoteId ->
-                                navController.navigate("/editNote/$kneeNoteId")
-                            }
-                        )
-                    }
-                    else -> Text("未定義の画面です", modifier = Modifier.padding(paddingValues))
+                        toEdit = { kneeRecordId ->
+                            navController.navigate("/editRecord/$kneeRecordId")
+                        }
+                    )
                 }
+
+                1 -> WeeklyScreen(modifier = Modifier.padding(paddingValues))
+                2 -> {
+                    val viewModel: NoteScreenViewModel = hiltViewModel()
+                    NoteScreen(
+                        modifier = Modifier.padding(paddingValues),
+                        viewModel = viewModel,
+                        toEdit = { kneeNoteId ->
+                            navController.navigate("/editNote/$kneeNoteId")
+                        }
+                    )
+                }
+
+                else -> Text("未定義の画面です", modifier = Modifier.padding(paddingValues))
+            }
         },
         bottomBar = {
             BottomAppBar {

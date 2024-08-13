@@ -83,7 +83,7 @@ fun RecordScreen(
         // こうすることで、UiStateが変化したタイミングで再コンポーズが行われる。
         uiState = uiState,
         create = { dateTime, isRight, pain, weather, note ->
-            viewModel.create(dateTime, isRight, pain, weather, note)
+            viewModel.saveData(dateTime, isRight, pain, weather, note)
         },
         moveToIdle = {
             viewModel.moveToIdle()
